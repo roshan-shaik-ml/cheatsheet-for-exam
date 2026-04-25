@@ -1,0 +1,2628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exam Review — Seven Topics</title>
+<h2 class="sr-only">Exam review with Apple-style bento design covering number conversions, algorithms, database, formulas, tracing patterns, and comparison traps.</h2>
+
+<style>
+  .sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+  .ar-wrap {
+    padding: 8px 0 32px;
+    font-family: -apple-system, "SF Pro Display", "SF Pro Text", "Anthropic Sans", system-ui, sans-serif;
+    font-feature-settings: "ss01", "cv11";
+    position: relative;
+    isolation: isolate;
+  }
+  .ar-wrap::before {
+    content: "";
+    position: absolute;
+    top: -10%;
+    left: -5%;
+    width: 50%;
+    height: 60%;
+    background: radial-gradient(circle at center, rgba(0, 102, 204, 0.18), transparent 60%);
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .ar-wrap::after {
+    content: "";
+    position: absolute;
+    top: 30%;
+    right: -10%;
+    width: 55%;
+    height: 70%;
+    background: radial-gradient(circle at center, rgba(212, 83, 126, 0.15), transparent 60%);
+    filter: blur(90px);
+    pointer-events: none;
+    z-index: -1;
+  }
+  @media (prefers-color-scheme: dark) {
+    .ar-wrap::before {
+      background: radial-gradient(circle at center, rgba(41, 151, 255, 0.22), transparent 60%);
+    }
+    .ar-wrap::after {
+      background: radial-gradient(circle at center, rgba(212, 83, 126, 0.18), transparent 60%);
+    }
+  }
+
+  .ar-hero {
+    margin: 16px 0 32px;
+    text-align: center;
+  }
+  .ar-hero-eyebrow {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ar-text-soft);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .ar-hero-title {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: var(--ar-text);
+    margin: 0 0 10px;
+  }
+  .ar-hero-sub {
+    font-size: 15px;
+    color: var(--ar-text-soft);
+    line-height: 1.5;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .ar-tabs {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 24px;
+    padding-bottom: 4px;
+  }
+  .ar-tab {
+    padding: 9px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: var(--ar-chip);
+    color: var(--ar-text-soft);
+    border-radius: 999px;
+    font-family: inherit;
+    white-space: nowrap;
+    text-align: center;
+    transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+    letter-spacing: -0.01em;
+  }
+  .ar-tab:hover {
+    background: var(--ar-chip-hover);
+    color: var(--ar-text);
+  }
+  .ar-tab.active {
+    background: var(--ar-text);
+    color: var(--ar-bg);
+  }
+
+  .ar-panel { display: none; animation: arFade 0.35s cubic-bezier(0.25, 0.1, 0.25, 1); }
+  .ar-panel.active { display: block; }
+  @keyframes arFade {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .ar-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: minmax(min-content, auto);
+    gap: 12px;
+  }
+
+  .ar-tile {
+    background: var(--ar-tile);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 18px;
+    padding: 22px 24px;
+    border: 0.5px solid var(--ar-border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1),
+                background 0.25s ease;
+  }
+  .ar-tile:hover {
+    transform: translateY(-1px);
+  }
+
+  .ar-tile.accent {
+    background: var(--ar-accent-bg);
+    border-color: var(--ar-accent-border);
+  }
+  .ar-tile.dark {
+    background: rgba(29, 29, 31, 0.92);
+    color: var(--ar-bg);
+    border-color: transparent;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+  .ar-tile.dark .ar-eyebrow,
+  .ar-tile.dark .ar-soft { color: rgba(255,255,255,0.65); }
+  .ar-tile.dark .ar-eq,
+  .ar-tile.dark .ar-mono { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.95); }
+  .ar-tile.dark .ar-result-pill { background: rgba(255,255,255,0.12); color: #fff; }
+  .ar-tile.dark .ar-trap { border-top-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
+
+  .ar-eyebrow {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ar-text-soft);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .ar-h {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.018em;
+    color: inherit;
+    margin: 0 0 8px;
+  }
+  .ar-h-lg {
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.022em;
+    margin: 0 0 10px;
+  }
+  .ar-h-xl {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    margin: 0 0 12px;
+  }
+  .ar-h-mono {
+    font-family: "SF Mono", ui-monospace, "Menlo", "Anthropic Sans", monospace;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 0 0 12px;
+  }
+  .ar-body {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ar-text-soft);
+  }
+  .ar-soft { color: var(--ar-text-soft); }
+  .ar-strong { color: var(--ar-text); font-weight: 500; }
+
+  .ar-eq {
+    font-family: "SF Mono", ui-monospace, "Menlo", monospace;
+    font-size: 14px;
+    line-height: 2;
+    white-space: pre;
+    background: var(--ar-eq-bg);
+    color: var(--ar-text);
+    padding: 14px 16px;
+    border-radius: 12px;
+    overflow-x: auto;
+    letter-spacing: 0.005em;
+    font-feature-settings: "calt" 0, "liga" 0;
+  }
+  .ar-frac {
+    background: var(--ar-eq-bg);
+    border-radius: 12px;
+    padding: 18px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-family: "SF Mono", ui-monospace, "Menlo", monospace;
+    font-size: 16px;
+    color: var(--ar-text);
+  }
+  .ar-frac-stack {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .ar-frac-num,
+  .ar-frac-den {
+    padding: 0 6px;
+    line-height: 1.3;
+  }
+  .ar-frac-num {
+    border-bottom: 1px solid var(--ar-text);
+    padding-bottom: 4px;
+  }
+  .ar-frac-den {
+    padding-top: 2px;
+  }
+
+  .ar-osi {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 4px;
+  }
+  .ar-osi-row {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--ar-eq-bg);
+    border: 0.5px solid transparent;
+    transition: background 0.2s ease;
+  }
+  .ar-osi-row.ar-osi-mark {
+    background: var(--ar-accent-bg);
+    border-color: var(--ar-accent-border);
+  }
+  .ar-osi-num {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ar-text-soft);
+    text-align: center;
+    width: 22px;
+    padding: 2px 0;
+    background: var(--ar-bg);
+    border-radius: 4px;
+  }
+  .ar-osi-mark .ar-osi-num {
+    color: var(--ar-accent);
+    background: rgba(255,255,255,0.6);
+  }
+  .ar-osi-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ar-text);
+    letter-spacing: -0.005em;
+  }
+  .ar-osi-device {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--ar-text-soft);
+    text-align: right;
+  }
+  .ar-osi-mark .ar-osi-device {
+    color: var(--ar-text);
+  }
+  @media (prefers-color-scheme: dark) {
+    .ar-osi-mark .ar-osi-num { background: rgba(0,0,0,0.3); }
+  }
+
+  .ar-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .ar-step {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 10px;
+    align-items: baseline;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ar-text);
+  }
+  .ar-step-num {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ar-text-soft);
+    text-align: right;
+    padding-top: 1px;
+  }
+  .ar-step code {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 12px;
+    background: var(--ar-eq-bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .ar-buckets {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 12px;
+  }
+  .ar-bucket {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .ar-bucket-idx {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--ar-text-soft);
+  }
+  .ar-bucket-cell {
+    width: 100%;
+    height: 32px;
+    border-radius: 6px;
+    background: var(--ar-eq-bg);
+    border: 0.5px solid var(--ar-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ar-text);
+  }
+  .ar-bucket-cell.filled {
+    background: var(--ar-accent-bg);
+    border-color: var(--ar-accent-border);
+    color: var(--ar-accent);
+  }
+
+  .ar-gantt {
+    display: flex;
+    margin-top: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 0.5px solid var(--ar-border);
+  }
+  .ar-gantt-block {
+    padding: 10px 8px;
+    text-align: center;
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 500;
+    border-right: 0.5px solid var(--ar-border);
+    color: white;
+  }
+  .ar-gantt-block:last-child { border-right: none; }
+  .ar-gantt-axis {
+    display: flex;
+    margin-top: 4px;
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--ar-text-soft);
+  }
+  .ar-gantt-tick {
+    flex: 1;
+    text-align: left;
+    margin-left: -4px;
+  }
+  .ar-gantt-tick:last-child { flex: 0; }
+
+  .ar-frames {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 12px;
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 12px;
+  }
+  .ar-frames-row {
+    display: grid;
+    grid-template-columns: 28px repeat(8, 1fr) 24px;
+    gap: 3px;
+    align-items: center;
+  }
+  .ar-frames-label {
+    color: var(--ar-text-soft);
+    font-size: 10px;
+    text-align: right;
+  }
+  .ar-frames-cell {
+    background: var(--ar-eq-bg);
+    border-radius: 4px;
+    padding: 5px 0;
+    text-align: center;
+    color: var(--ar-text);
+  }
+  .ar-frames-cell.in { background: var(--ar-accent-bg); color: var(--ar-accent); }
+  .ar-frames-cell.evict { background: rgba(212, 83, 126, 0.15); color: #993556; text-decoration: line-through; }
+  .ar-frames-cell.empty { color: var(--ar-text-soft); opacity: 0.4; }
+  .ar-frames-tag {
+    font-size: 9px;
+    text-align: left;
+    padding-left: 4px;
+    color: var(--ar-text-soft);
+  }
+  .ar-frames-tag.fault { color: #993556; }
+  @media (prefers-color-scheme: dark) {
+    .ar-frames-cell.evict { background: rgba(212, 83, 126, 0.2); color: #ED93B1; }
+    .ar-frames-tag.fault { color: #ED93B1; }
+  }
+  .ar-mono {
+    font-family: "SF Mono", ui-monospace, "Menlo", monospace;
+    font-size: 13px;
+    line-height: 1.85;
+    white-space: pre;
+    color: var(--ar-text);
+    letter-spacing: 0.005em;
+    font-feature-settings: "calt" 0;
+  }
+  .ar-deflist {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 18px;
+    margin-top: 4px;
+    align-items: baseline;
+  }
+  .ar-deflist dt {
+    font-family: "SF Mono", ui-monospace, "Menlo", monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ar-text);
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .ar-deflist dd {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ar-text-soft);
+    margin: 0;
+  }
+  .ar-deflist dd .note {
+    display: block;
+    font-size: 12px;
+    color: var(--ar-text-soft);
+    opacity: 0.75;
+    margin-top: 1px;
+  }
+  .ar-deflist + .ar-deflist {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 0.5px solid var(--ar-border);
+  }
+  .ar-deflist-heading {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ar-text);
+    letter-spacing: 0;
+    margin-bottom: 6px;
+    grid-column: 1 / -1;
+  }
+  .ar-result-pill {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 12px;
+    padding: 6px 14px;
+    background: var(--ar-accent);
+    color: white;
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 999px;
+    align-self: flex-start;
+    letter-spacing: 0.005em;
+  }
+  .ar-trap {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 0.5px solid var(--ar-border);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ar-text-soft);
+  }
+  .ar-trap-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ar-text);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    opacity: 0.7;
+  }
+
+  .ar-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 10px;
+  }
+  .ar-table th {
+    padding: 8px 10px 8px 0;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ar-text-soft);
+    border-bottom: 0.5px solid var(--ar-border);
+    letter-spacing: -0.005em;
+  }
+  .ar-table td {
+    padding: 9px 10px 9px 0;
+    border-bottom: 0.5px solid var(--ar-border);
+    color: var(--ar-text);
+  }
+  .ar-table tr:last-child td { border-bottom: none; }
+  .ar-table .row-name { font-weight: 500; }
+  .ar-table .mono { font-family: "SF Mono", ui-monospace, monospace; font-size: 12px; }
+
+  .span2 { grid-column: span 2; }
+  .span3 { grid-column: span 3; }
+  .span4 { grid-column: span 4; }
+  .span6 { grid-column: span 6; }
+  .row-2 { grid-row: span 2; }
+
+  .ar-section-label {
+    grid-column: span 6;
+    grid-row: auto / auto;
+    align-self: end;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ar-text-soft);
+    letter-spacing: -0.005em;
+    margin: 8px 0 0;
+    min-height: 0;
+  }
+
+  .ar-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .ar-stat-label {
+    font-size: 12px;
+    color: var(--ar-text-soft);
+    font-weight: 400;
+  }
+  .ar-stat-value {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ar-text);
+    letter-spacing: -0.01em;
+  }
+
+  :root {
+    --ar-bg: #ffffff;
+    --ar-tile: rgba(250, 250, 249, 0.72);
+    --ar-border: rgba(0, 0, 0, 0.08);
+    --ar-text: #1d1d1f;
+    --ar-text-soft: #6e6e73;
+    --ar-accent: #0066cc;
+    --ar-accent-bg: rgba(240, 246, 255, 0.75);
+    --ar-accent-border: rgba(0, 102, 204, 0.18);
+    --ar-eq-bg: rgba(0, 0, 0, 0.04);
+    --ar-chip: rgba(245, 245, 247, 0.7);
+    --ar-chip-hover: rgba(235, 235, 237, 0.9);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ar-bg: #000000;
+      --ar-tile: rgba(28, 28, 30, 0.65);
+      --ar-border: rgba(255, 255, 255, 0.1);
+      --ar-text: #f5f5f7;
+      --ar-text-soft: #a1a1a6;
+      --ar-accent: #2997ff;
+      --ar-accent-bg: rgba(17, 36, 61, 0.7);
+      --ar-accent-border: rgba(41, 151, 255, 0.28);
+      --ar-eq-bg: rgba(255, 255, 255, 0.06);
+      --ar-chip: rgba(44, 44, 46, 0.65);
+      --ar-chip-hover: rgba(58, 58, 60, 0.85);
+    }
+    .ar-tile.dark {
+      background: rgba(245, 245, 247, 0.92);
+      color: #1d1d1f;
+    }
+    .ar-tile.dark .ar-eyebrow,
+    .ar-tile.dark .ar-soft { color: rgba(0,0,0,0.6); }
+    .ar-tile.dark .ar-eq,
+    .ar-tile.dark .ar-mono { background: rgba(0,0,0,0.06); color: #1d1d1f; }
+    .ar-tile.dark .ar-result-pill { background: #1d1d1f; color: #fff; }
+    .ar-tile.dark .ar-trap { border-top-color: rgba(0,0,0,0.12); color: rgba(0,0,0,0.6); }
+  }
+
+  .ar-subtabs {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    background: var(--ar-chip);
+    border-radius: 999px;
+    margin-bottom: 18px;
+  }
+  .ar-subtab {
+    padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--ar-text-soft);
+    border-radius: 999px;
+    font-family: inherit;
+    transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+    letter-spacing: -0.01em;
+  }
+  .ar-subtab:hover { color: var(--ar-text); }
+  .ar-subtab.active {
+    background: var(--ar-bg);
+    color: var(--ar-text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .ar-subpanel { display: none; }
+  .ar-subpanel.active { display: block; animation: arFade 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); }
+
+  .ar-anim-controls {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .ar-anim-btn {
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 0.5px solid var(--ar-border);
+    background: var(--ar-tile);
+    color: var(--ar-text);
+    border-radius: 10px;
+    font-family: inherit;
+    transition: all 0.18s cubic-bezier(0.25, 0.1, 0.25, 1);
+    letter-spacing: -0.01em;
+    backdrop-filter: blur(20px);
+  }
+  .ar-anim-btn:hover {
+    background: var(--ar-chip-hover);
+    transform: translateY(-1px);
+  }
+  .ar-anim-btn:active { transform: translateY(0); }
+  .ar-anim-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .ar-anim-btn.primary {
+    background: var(--ar-text);
+    color: var(--ar-bg);
+    border-color: transparent;
+  }
+  .ar-anim-btn.primary:hover { background: var(--ar-text); opacity: 0.9; }
+  .ar-anim-input {
+    width: 64px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 0.5px solid var(--ar-border);
+    background: var(--ar-tile);
+    color: var(--ar-text);
+    border-radius: 10px;
+    font-family: "SF Mono", ui-monospace, monospace;
+    text-align: center;
+    backdrop-filter: blur(20px);
+  }
+  .ar-anim-input:focus {
+    outline: none;
+    border-color: var(--ar-accent);
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.12);
+  }
+
+  .ar-canvas {
+    width: 100%;
+    height: 280px;
+    background: var(--ar-eq-bg);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .ar-narrator {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ar-text-soft);
+    min-height: 38px;
+    padding: 10px 14px;
+    background: var(--ar-eq-bg);
+    border-radius: 10px;
+    transition: background 0.2s ease;
+  }
+  .ar-narrator.active {
+    background: var(--ar-accent-bg);
+    color: var(--ar-text);
+  }
+  .ar-narrator code {
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 12px;
+    background: rgba(0,0,0,0.05);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  @media (prefers-color-scheme: dark) {
+    .ar-narrator code { background: rgba(255,255,255,0.08); }
+  }
+
+  .ar-node {
+    transition: transform 0.5s cubic-bezier(0.25, 0.1, 0.25, 1),
+                opacity 0.4s ease;
+  }
+  .ar-node-rect {
+    fill: var(--ar-bg);
+    stroke: var(--ar-text);
+    stroke-width: 1;
+    transition: fill 0.3s ease, stroke 0.3s ease;
+  }
+  .ar-node.highlight .ar-node-rect {
+    fill: var(--ar-accent);
+    stroke: var(--ar-accent);
+  }
+  .ar-node.highlight .ar-node-text { fill: white; }
+  .ar-node.fade { opacity: 0; }
+  .ar-node-text {
+    fill: var(--ar-text);
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 14px;
+    font-weight: 500;
+    transition: fill 0.3s ease;
+  }
+  .ar-pointer {
+    stroke: var(--ar-text-soft);
+    stroke-width: 1.5;
+    fill: none;
+    transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  .ar-pointer.highlight { stroke: var(--ar-accent); stroke-width: 2; }
+  .ar-label {
+    fill: var(--ar-text-soft);
+    font-family: "SF Mono", ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  body {
+    background: var(--ar-bg);
+    margin: 0;
+    padding: 16px 24px;
+  }
+</style>
+</head>
+<body>
+<div class="ar-wrap">
+
+  <div class="ar-hero">
+    <div class="ar-hero-eyebrow">Exam review</div>
+    <h1 class="ar-hero-title">Seven topics. One page.</h1>
+    <p class="ar-hero-sub">A curated cheat sheet for ITPEC-style exams. Each tab covers one domain. Each tile teaches one idea.</p>
+  </div>
+
+  <div class="ar-tabs" role="tablist">
+    <button class="ar-tab active" data-panel="conversions">Conversions</button>
+    <button class="ar-tab" data-panel="algorithms">Algorithms</button>
+    <button class="ar-tab" data-panel="database">Database</button>
+    <button class="ar-tab" data-panel="formulas">Formulas</button>
+    <button class="ar-tab" data-panel="comparisons">Comparisons</button>
+    <button class="ar-tab" data-panel="animation">Animation</button>
+  </div>
+
+  <div class="ar-panel active" id="panel-conversions">
+    <div class="ar-grid">
+
+      <div class="ar-tile dark span6">
+        <div class="ar-eyebrow">The golden rule</div>
+        <h2 class="ar-h-xl">Split at the point.<br/>Two halves, two methods.</h2>
+        <div class="ar-body" style="color: rgba(255,255,255,0.7); margin-top: 4px;">
+          <span class="ar-strong" style="color: white;">Integer</span> — divide by base, read remainders bottom up.<br/>
+          <span class="ar-strong" style="color: white;">Fraction</span> — multiply by base, read carries top down.
+        </div>
+      </div>
+
+      <div class="ar-tile span3 row-2">
+        <div class="ar-eyebrow">Decimal → binary · integer</div>
+        <h3 class="ar-h">Convert 13</h3>
+        <div class="ar-eq">13 ÷ 2 = 6   r 1   ↑
+ 6 ÷ 2 = 3   r 0   ↑
+ 3 ÷ 2 = 1   r 1   ↑
+ 1 ÷ 2 = 0   r 1   ↑</div>
+        <div class="ar-result-pill">13₁₀ = 1101₂</div>
+      </div>
+
+      <div class="ar-tile span3 row-2">
+        <div class="ar-eyebrow">Decimal → binary · fraction</div>
+        <h3 class="ar-h">Convert 0.625</h3>
+        <div class="ar-eq">0.625 × 2 = 1.25  → 1  ↓
+0.25  × 2 = 0.5   → 0  ↓
+0.5   × 2 = 1.0   → 1  ↓</div>
+        <div class="ar-result-pill">0.625₁₀ = 0.101₂</div>
+      </div>
+
+      <div class="ar-tile accent span6">
+        <div class="ar-eyebrow">To decimal</div>
+        <h2 class="ar-h-lg">Multiply each digit by base raised to its position.</h2>
+        <div class="ar-body">Left of point: 0, 1, 2, … &nbsp;·&nbsp; Right of point: −1, −2, −3, …</div>
+      </div>
+
+      <div class="ar-tile span2">
+        <div class="ar-eyebrow">Binary → decimal</div>
+        <div class="ar-h-mono">1101.101₂</div>
+        <div class="ar-eq" style="font-size: 13px;">1·2³ + 1·2² + 0·2¹ + 1·2⁰
++ 1·2⁻¹ + 0·2⁻² + 1·2⁻³</div>
+        <div class="ar-result-pill">= 13.625</div>
+      </div>
+
+      <div class="ar-tile span2">
+        <div class="ar-eyebrow">Octal → decimal</div>
+        <div class="ar-h-mono">17.4₈</div>
+        <div class="ar-eq">1·8¹ + 7·8⁰
++ 4·8⁻¹</div>
+        <div class="ar-result-pill">= 15.5</div>
+      </div>
+
+      <div class="ar-tile span2">
+        <div class="ar-eyebrow">Hex → decimal</div>
+        <div class="ar-h-mono">2A.8₁₆</div>
+        <div class="ar-eq">2·16¹ + A·16⁰
++ 8·16⁻¹</div>
+        <div class="ar-result-pill">= 42.5</div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Shortcut · binary ↔ octal</div>
+        <h3 class="ar-h">Group bits in threes</h3>
+        <div class="ar-eq">110101.1101
+→ 110 101 . 110 100
+→   6   5 .   6   4</div>
+        <div class="ar-result-pill">= 65.64₈</div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Shortcut · binary ↔ hex</div>
+        <h3 class="ar-h">Group bits in fours</h3>
+        <div class="ar-eq">11011010.1011
+→ 1101 1010 . 1011
+→    D    A .    B</div>
+        <div class="ar-result-pill">= DA.B₁₆</div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Hex digit map</div>
+        <h3 class="ar-h">Memorize</h3>
+        <div class="ar-eq" style="text-align:center; font-size: 14px;">A=10   B=11   C=12
+D=13   E=14   F=15</div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Powers of 2</div>
+        <h3 class="ar-h">Memorize</h3>
+        <div class="ar-eq" style="font-size: 12px;">2¹=2     2²=4     2³=8
+2⁴=16    2⁵=32    2⁶=64
+2⁷=128   2⁸=256   2⁹=512
+2¹⁰=1024</div>
+      </div>
+
+      <div class="ar-section-label">Unit prefixes</div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Smaller · negative powers</div>
+        <h3 class="ar-h">For times, signals, capacitance</h3>
+        <table class="ar-table" style="margin-top: 4px;">
+          <thead>
+            <tr><th>Power</th><th>Symbol</th><th>Name</th><th>Meaning</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">10⁻³</td><td class="row-name">m</td><td>milli</td><td>thousandth</td></tr>
+            <tr><td class="mono">10⁻⁶</td><td class="row-name">μ</td><td>micro</td><td>millionth</td></tr>
+            <tr><td class="mono">10⁻⁹</td><td class="row-name">n</td><td>nano</td><td>billionth</td></tr>
+            <tr><td class="mono">10⁻¹²</td><td class="row-name">p</td><td>pico</td><td>trillionth</td></tr>
+            <tr><td class="mono">10⁻¹⁵</td><td class="row-name">f</td><td>femto</td><td>quadrillionth</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Larger · positive powers</div>
+        <h3 class="ar-h">For storage, frequency, bandwidth</h3>
+        <table class="ar-table" style="margin-top: 4px;">
+          <thead>
+            <tr><th>Power</th><th>Symbol</th><th>Name</th><th>Meaning</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">10³</td><td class="row-name">k</td><td>kilo</td><td>thousand</td></tr>
+            <tr><td class="mono">10⁶</td><td class="row-name">M</td><td>mega</td><td>million</td></tr>
+            <tr><td class="mono">10⁹</td><td class="row-name">G</td><td>giga</td><td>billion</td></tr>
+            <tr><td class="mono">10¹²</td><td class="row-name">T</td><td>tera</td><td>trillion</td></tr>
+            <tr><td class="mono">10¹⁵</td><td class="row-name">P</td><td>peta</td><td>quadrillion</td></tr>
+          </tbody>
+        </table>
+        <div class="ar-trap">
+          <div class="ar-trap-label">Trap</div>
+          In storage, "kilo" sometimes means 1024. Modern usage: kB = 1000, KiB = 1024. ITPEC means decimal unless they write KiB.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="ar-panel" id="panel-algorithms">
+    <div class="ar-grid">
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Search algorithms</div>
+        <h3 class="ar-h">Time complexity</h3>
+        <table class="ar-table">
+          <thead>
+            <tr><th>Algorithm</th><th>Best</th><th>Avg</th><th>Worst</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-name">Linear</td><td class="mono">O(1)</td><td class="mono">O(n)</td><td class="mono">O(n)</td></tr>
+            <tr><td class="row-name">Binary</td><td class="mono">O(1)</td><td class="mono">O(log n)</td><td class="mono">O(log n)</td></tr>
+            <tr><td class="row-name">Hash</td><td class="mono">O(1)</td><td class="mono">O(1)</td><td class="mono">O(n)</td></tr>
+            <tr><td class="row-name">BST</td><td class="mono">O(1)</td><td class="mono">O(log n)</td><td class="mono">O(n)</td></tr>
+          </tbody>
+        </table>
+        <div class="ar-trap">
+          <div class="ar-trap-label">Remember</div>
+          Binary search needs a sorted array. Hash and BST hit worst case when collisions or skewed trees ruin the bucketing.
+        </div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Sorting algorithms</div>
+        <h3 class="ar-h">Time complexity</h3>
+        <table class="ar-table">
+          <thead>
+            <tr><th>Algorithm</th><th>Best</th><th>Avg</th><th>Worst</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-name">Bubble</td><td class="mono">O(n)</td><td class="mono">O(n²)</td><td class="mono">O(n²)</td></tr>
+            <tr><td class="row-name">Selection</td><td class="mono">O(n²)</td><td class="mono">O(n²)</td><td class="mono">O(n²)</td></tr>
+            <tr><td class="row-name">Insertion</td><td class="mono">O(n)</td><td class="mono">O(n²)</td><td class="mono">O(n²)</td></tr>
+            <tr><td class="row-name">Merge</td><td class="mono">O(n log n)</td><td class="mono">O(n log n)</td><td class="mono">O(n log n)</td></tr>
+            <tr><td class="row-name">Quick</td><td class="mono">O(n log n)</td><td class="mono">O(n log n)</td><td class="mono">O(n²)</td></tr>
+            <tr><td class="row-name">Heap</td><td class="mono">O(n log n)</td><td class="mono">O(n log n)</td><td class="mono">O(n log n)</td></tr>
+            <tr><td class="row-name">Shell</td><td class="mono">O(n log n)</td><td class="mono">O(n^1.25)</td><td class="mono">O(n²)</td></tr>
+          </tbody>
+        </table>
+        <div class="ar-trap">
+          <div class="ar-trap-label">Remember</div>
+          Merge and heap are reliably <span class="ar-strong">n log n</span>. Quicksort matches them on average but degrades on bad pivots.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="ar-panel" id="panel-database">
+    <div class="ar-grid">
+
+      <div class="ar-tile dark span6">
+        <div class="ar-eyebrow">ACID</div>
+        <h2 class="ar-h-xl">Four guarantees a transaction must keep.</h2>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 18px;">
+          <div>
+            <div style="font-family: 'SF Mono', monospace; font-size: 28px; font-weight: 500; color: white; line-height: 1; margin-bottom: 4px;">A</div>
+            <div style="font-size: 14px; font-weight: 500; color: white; margin-bottom: 2px;">Atomicity</div>
+            <div style="font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.4;">All steps commit, or none do.</div>
+          </div>
+          <div>
+            <div style="font-family: 'SF Mono', monospace; font-size: 28px; font-weight: 500; color: white; line-height: 1; margin-bottom: 4px;">C</div>
+            <div style="font-size: 14px; font-weight: 500; color: white; margin-bottom: 2px;">Consistency</div>
+            <div style="font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.4;">Constraints always hold.</div>
+          </div>
+          <div>
+            <div style="font-family: 'SF Mono', monospace; font-size: 28px; font-weight: 500; color: white; line-height: 1; margin-bottom: 4px;">I</div>
+            <div style="font-size: 14px; font-weight: 500; color: white; margin-bottom: 2px;">Isolation</div>
+            <div style="font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.4;">Concurrent txns don't see mid-state.</div>
+          </div>
+          <div>
+            <div style="font-family: 'SF Mono', monospace; font-size: 28px; font-weight: 500; color: white; line-height: 1; margin-bottom: 4px;">D</div>
+            <div style="font-size: 14px; font-weight: 500; color: white; margin-bottom: 2px;">Durability</div>
+            <div style="font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.4;">Survives crashes once committed.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ar-tile span6">
+        <div class="ar-eyebrow">SQL clause execution order</div>
+        <h3 class="ar-h-lg">Written one way. Run another.</h3>
+        <div class="ar-body" style="margin-bottom: 12px;">SQL is written <span class="ar-strong">SELECT</span>-first but executed <span class="ar-strong">FROM</span>-first. The real order tells you what's available where.</div>
+        <div class="ar-mono">1.  FROM (and JOIN)     build the working set
+2.  WHERE               filter rows
+3.  GROUP BY            group remaining rows
+4.  HAVING              filter groups (aggregates allowed)
+5.  SELECT              project columns
+6.  ORDER BY            sort result
+7.  LIMIT / OFFSET      trim</div>
+        <div class="ar-trap">
+          <div class="ar-trap-label">Classic trap</div>
+          You cannot use <span class="ar-strong">SUM / COUNT / AVG</span> inside <span class="ar-strong">WHERE</span> — rows aren't grouped yet. Aggregates only work in HAVING and SELECT.
+        </div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">JOIN types</div>
+        <h3 class="ar-h">How tables combine</h3>
+        <dl class="ar-deflist">
+          <dt>INNER</dt><dd>Matching rows from both</dd>
+          <dt>LEFT OUTER</dt><dd>All left + matched right</dd>
+          <dt>RIGHT OUTER</dt><dd>All right + matched left</dd>
+          <dt>FULL OUTER</dt><dd>All rows from both</dd>
+          <dt>CROSS</dt><dd>Every row × every row</dd>
+        </dl>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Subquery operators</div>
+        <h3 class="ar-h">Test against a result set</h3>
+        <dl class="ar-deflist">
+          <dt>IN</dt><dd>Col matches any returned</dd>
+          <dt>NOT IN</dt><dd>Col matches none</dd>
+          <dt>EXISTS</dt><dd>Subquery returns ≥ 1 row</dd>
+          <dt>= ANY</dt><dd>Same as IN</dd>
+          <dt>= ALL</dt><dd>Col equals every value</dd>
+        </dl>
+      </div>
+
+      <div class="ar-tile accent span6">
+        <div class="ar-eyebrow">Cloud service models</div>
+        <h3 class="ar-h-lg">Higher up the stack, less you manage.</h3>
+        <table class="ar-table">
+          <thead>
+            <tr><th>Model</th><th>Provider manages</th><th>Customer manages</th><th>Example</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-name">IaaS</td><td>Hardware, virt, network</td><td>OS, runtime, app, data</td><td>AWS EC2, GCP Compute</td></tr>
+            <tr><td class="row-name">PaaS</td><td>+ OS, runtime, middleware</td><td>App + data only</td><td>Heroku, App Engine</td></tr>
+            <tr><td class="row-name">SaaS</td><td>Everything</td><td>Just config + data</td><td>Gmail, Salesforce</td></tr>
+          </tbody>
+        </table>
+        <div class="ar-trap">
+          <div class="ar-trap-label">Merit question</div>
+          PaaS reduces install / operation burden — provider patches the platform. SaaS removes operational concerns (failover, backups) but <span class="ar-strong">not</span> security policy obligations.
+        </div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">DB design levels</div>
+        <h3 class="ar-h">Three layers of abstraction</h3>
+        <dl class="ar-deflist">
+          <dt>Conceptual</dt><dd>ER · entities · relationships</dd>
+          <dt>Logical</dt><dd>Relations · keys · normalization</dd>
+          <dt>Physical</dt><dd>Storage · indexes · datatypes</dd>
+        </dl>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Normalization</div>
+        <h3 class="ar-h">Each form removes one redundancy</h3>
+        <dl class="ar-deflist">
+          <dt>1NF</dt><dd>Atomic columns</dd>
+          <dt>2NF</dt><dd>1NF + no partial key dep</dd>
+          <dt>3NF</dt><dd>2NF + no transitive dep</dd>
+          <dt>BCNF</dt><dd>3NF + every determinant is a key</dd>
+        </dl>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="ar-panel" id="panel-formulas">
+    <div class="ar-grid">
+
+      <div class="ar-tile span6">
+        <div class="ar-eyebrow">IEEE 754 · single precision</div>
+        <h3 class="ar-h-lg">How a 32-bit float is stored</h3>
+        <div class="ar-body" style="margin-bottom: 12px;">Sign + biased exponent + mantissa. Practice converting bits → decimal in 30 seconds.</div>
+        <div class="ar-eq" style="font-size: 16px;">value = (−1)ˢ × 2^(E − 127) × (1 + F)</div>
+        <div class="ar-mono" style="margin-top: 12px;">S    sign bit            (1 bit)
+E    biased exponent     (8 bits, bias 127)
+F    mantissa            (23 bits, fractional)</div>
+      </div>
+
+      <div class="ar-tile accent span6">
+        <div class="ar-eyebrow">HDD average access time</div>
+        <h3 class="ar-h-lg">Four delays, summed.</h3>
+        <div class="ar-body" style="margin-bottom: 12px;">Reading one block from a spinning disk is the sum of four independent waits. Knowing each component is what gets tested.</div>
+        <div class="ar-eq" style="font-size: 14px;">total = seek + controller + rotational latency + transfer
+
+rotational latency  =  ½ × (60 / RPM)        seconds
+transfer time       =  block_size / rate     seconds</div>
+        <div class="ar-trap">
+          <div class="ar-trap-label">Why ½ on rotation</div>
+          A full rotation takes 60/RPM seconds. On average the sector is half a rotation away — sometimes right there, sometimes a full turn out. Mean = half a rotation.
+        </div>
+      </div>
+
+      <div class="ar-tile span2">
+        <div class="ar-eyebrow">MIPS</div>
+        <h3 class="ar-h">CPU speed metric</h3>
+        <div class="ar-body" style="margin-bottom: 10px;">Million instructions per second.</div>
+        <div class="ar-eq">MIPS = clock_MHz / CPI</div>
+      </div>
+
+      <div class="ar-tile span2">
+        <div class="ar-eyebrow">Cache effective access</div>
+        <h3 class="ar-h">Average memory time</h3>
+        <div class="ar-body" style="margin-bottom: 10px;">Hit rate weights the two paths.</div>
+        <div class="ar-eq">T = h·t_cache
+  + (1−h)·t_main</div>
+      </div>
+
+      <div class="ar-tile span2">
+        <div class="ar-eyebrow">PERT estimate</div>
+        <h3 class="ar-h">Three-point duration</h3>
+        <div class="ar-body" style="margin-bottom: 10px;">Most-likely is weighted heavier.</div>
+        <div class="ar-frac">
+          <span class="ar-frac-stack">
+            <span class="ar-frac-num">O + 4M + P</span>
+            <span class="ar-frac-den">6</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Series availability</div>
+        <h3 class="ar-h">All must work</h3>
+        <div class="ar-body" style="margin-bottom: 10px;">Availability multiplies down. Adding parts hurts.</div>
+        <div class="ar-eq" style="font-size: 16px;">A = A₁ × A₂ × … × Aₙ</div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Parallel availability</div>
+        <h3 class="ar-h">At least one must work</h3>
+        <div class="ar-body" style="margin-bottom: 10px;">Compute the chance all fail, then flip it.</div>
+        <div class="ar-eq" style="font-size: 16px;">A = 1 − (1 − A)ⁿ</div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">SLA max downtime</div>
+        <h3 class="ar-h">How long you can be down</h3>
+        <div class="ar-body" style="margin-bottom: 10px;">Service hours times your error budget.</div>
+        <div class="ar-eq">downtime = service_hrs
+         × (1 − target)</div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Straight-line depreciation</div>
+        <h3 class="ar-h">Even value drop per year</h3>
+        <div class="ar-body" style="margin-bottom: 10px;">Each year drops by the same amount.</div>
+        <div class="ar-frac">
+          <span>annual =</span>
+          <span class="ar-frac-stack">
+            <span class="ar-frac-num">cost − salvage</span>
+            <span class="ar-frac-den">useful_life</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="ar-section-label">Scheduling</div>
+
+      <div class="ar-tile span6">
+        <div class="ar-eyebrow">Scheduling metrics</div>
+        <h3 class="ar-h-lg">Three ways to measure a scheduler</h3>
+        <table class="ar-table">
+          <thead>
+            <tr><th>Metric</th><th>Definition</th><th>Unit</th><th>Direction</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-name">Throughput</td><td>Processes done per unit time</td><td>jobs / sec</td><td>Higher is better</td></tr>
+            <tr><td class="row-name">Turnaround</td><td>Arrival → completion (wait + burst + I/O)</td><td>seconds</td><td>Lower is better</td></tr>
+            <tr><td class="row-name">Response time</td><td>Arrival → first CPU allocation</td><td>seconds</td><td>Lower is better</td></tr>
+          </tbody>
+        </table>
+        <div class="ar-mono" style="margin-top: 14px;">turnaround  =  waiting + burst       (CPU-only)
+waiting     =  turnaround − burst
+response    ≤  turnaround             (always)</div>
+        <div class="ar-trap">
+          <div class="ar-trap-label">Trap</div>
+          Response is the wait until <span class="ar-strong">first</span> execution. Turnaround includes everything until <span class="ar-strong">completion</span>. They diverge in preemptive schedulers where a job starts, pauses, then finishes much later.
+        </div>
+      </div>
+
+      <div class="ar-tile span6">
+        <div class="ar-eyebrow">FCFS · first come first served</div>
+        <h3 class="ar-h-lg">The simplest scheduler</h3>
+        <div class="ar-body" style="margin-bottom: 12px;">Run whoever arrived first to completion. No preemption. Easy by hand.</div>
+        <div class="ar-eq">completion(i) = arrival(i) + waiting(i) + burst(i)
+turnaround(i) = completion(i) − arrival(i)
+waiting(i)    = turnaround(i) − burst(i)
+
+avg turnaround = Σ turnaround(i) / n
+avg waiting    = Σ waiting(i) / n</div>
+        <div class="ar-trap">
+          <div class="ar-trap-label">Convoy effect</div>
+          One long job at the front of the queue makes everyone wait. FCFS performs badly when burst times vary a lot.
+        </div>
+      </div>
+
+      <div class="ar-tile span6">
+        <div class="ar-eyebrow">FCFS · worked example</div>
+        <h3 class="ar-h-lg">Three processes, all arrive at time 0</h3>
+        <div class="ar-body" style="margin-bottom: 4px;">Run in arrival order, no preemption. Bursts: <code style="font-family: 'SF Mono', monospace;">P1=8</code>, <code style="font-family: 'SF Mono', monospace;">P2=4</code>, <code style="font-family: 'SF Mono', monospace;">P3=2</code>.</div>
+
+        <div class="ar-gantt">
+          <div class="ar-gantt-block" style="flex: 8; background: #534AB7;">P1</div>
+          <div class="ar-gantt-block" style="flex: 4; background: #1D9E75;">P2</div>
+          <div class="ar-gantt-block" style="flex: 2; background: #D85A30;">P3</div>
+        </div>
+        <div class="ar-gantt-axis">
+          <div class="ar-gantt-tick" style="flex: 8;">0</div>
+          <div class="ar-gantt-tick" style="flex: 4;">8</div>
+          <div class="ar-gantt-tick" style="flex: 2;">12</div>
+          <div class="ar-gantt-tick">14</div>
+        </div>
+
+        <table class="ar-table" style="margin-top: 16px;">
+          <thead>
+            <tr><th>Process</th><th>Burst</th><th>Wait</th><th>Turnaround</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-name">P1</td><td class="mono">8</td><td class="mono">0</td><td class="mono">8</td></tr>
+            <tr><td class="row-name">P2</td><td class="mono">4</td><td class="mono">8</td><td class="mono">12</td></tr>
+            <tr><td class="row-name">P3</td><td class="mono">2</td><td class="mono">12</td><td class="mono">14</td></tr>
+          </tbody>
+        </table>
+
+        <div class="ar-steps" style="margin-top: 14px;">
+          <div class="ar-step"><div class="ar-step-num">·</div><div>Avg wait = <code>(0 + 8 + 12) / 3 = 6.67</code></div></div>
+          <div class="ar-step"><div class="ar-step-num">·</div><div>Avg turnaround = <code>(8 + 12 + 14) / 3 = 11.33</code></div></div>
+        </div>
+
+        <div class="ar-trap">
+          <div class="ar-trap-label">Compare with SJF</div>
+          P3 only needs 2 units but waits 12. If we'd run shortest-first (P3 → P2 → P1), avg wait drops to <code>(0 + 2 + 6) / 3 = 2.67</code>. That's why SJF beats FCFS on average.
+        </div>
+      </div>
+
+      <div class="ar-section-label">Misc</div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Permutations · nPr</div>
+        <h3 class="ar-h">Order matters</h3>
+        <div class="ar-body" style="margin-bottom: 10px;">Pick <code>r</code> items from <code>n</code> where <span class="ar-strong">arrangement counts</span> — first/second/third are different outcomes.</div>
+        <div class="ar-frac">
+          <span>ⁿPᵣ =</span>
+          <span class="ar-frac-stack">
+            <span class="ar-frac-num">n!</span>
+            <span class="ar-frac-den">(n − r)!</span>
+          </span>
+        </div>
+        <div class="ar-trap">
+          <div class="ar-trap-label">Example</div>
+          Race with 5 runners, how many ways to fill gold/silver/bronze? <code>⁵P₃ = 5! / 2! = 60</code>.
+        </div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Combinations · nCr</div>
+        <h3 class="ar-h">Order doesn't matter</h3>
+        <div class="ar-body" style="margin-bottom: 10px;">Pick <code>r</code> items from <code>n</code> where you only care <span class="ar-strong">which</span> were chosen, not the order.</div>
+        <div class="ar-frac">
+          <span>ⁿCᵣ =</span>
+          <span class="ar-frac-stack">
+            <span class="ar-frac-num">n!</span>
+            <span class="ar-frac-den">r! × (n − r)!</span>
+          </span>
+        </div>
+        <div class="ar-trap">
+          <div class="ar-trap-label">Example</div>
+          Pick a 3-person committee from 5 people. <code>⁵C₃ = 5! / (3! × 2!) = 10</code>. nCr is always smaller than nPr by a factor of <code>r!</code>.
+        </div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Group probability</div>
+        <h3 class="ar-h">k items adjacent in n slots</h3>
+        <div class="ar-frac">
+          <span>P =</span>
+          <span class="ar-frac-stack">
+            <span class="ar-frac-num">(n − k + 1)! × k!</span>
+            <span class="ar-frac-den">n!</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Bit-shift × tricks</div>
+        <h3 class="ar-h">Multiply by shift + add</h3>
+        <div class="ar-eq">9n = (n<<3) + n
+7n = (n<<3) − n
+5n = (n<<2) + n
+3n = (n<<1) + n</div>
+      </div>
+
+      <div class="ar-tile span6">
+        <div class="ar-eyebrow">Defect cost expected value</div>
+        <h3 class="ar-h">The chain of multiplications</h3>
+        <div class="ar-body" style="margin-bottom: 10px;">Multiply down the funnel — total → defective → discovered → in this category → cost each.</div>
+        <div class="ar-eq">EV = size × defect_rate × discovery_rate × category_share × cost_per_defect</div>
+      </div>
+
+      <div class="ar-section-label">Cryptography</div>
+
+      <div class="ar-tile span6">
+        <div class="ar-eyebrow">Key types · symmetric vs asymmetric</div>
+        <h3 class="ar-h-lg">One key or two?</h3>
+        <div class="ar-body" style="margin-bottom: 14px;">
+          <span class="ar-strong">Symmetric</span> uses one shared secret for both encrypt and decrypt — fast, but you have to get the secret to the other party safely. <span class="ar-strong">Asymmetric</span> (public-key) uses a key pair — what one key locks, only the other can unlock. Slower, but solves the key-distribution problem.
+        </div>
+        <table class="ar-table">
+          <thead>
+            <tr><th>Type</th><th>Keys</th><th>Speed</th><th>Use case</th><th>Examples</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-name">Symmetric</td><td>1 shared</td><td>Fast</td><td>Bulk data encryption</td><td class="mono">AES, DES, 3DES</td></tr>
+            <tr><td class="row-name">Asymmetric</td><td>2 (public + private)</td><td>Slow</td><td>Key exchange, signatures</td><td class="mono">RSA, ECC, DSA</td></tr>
+            <tr><td class="row-name">Hash</td><td>0 (one-way)</td><td>Fast</td><td>Integrity, fingerprints</td><td class="mono">SHA-256, MD5</td></tr>
+          </tbody>
+        </table>
+        <div class="ar-trap">
+          <div class="ar-trap-label">In practice · the hybrid trick</div>
+          TLS / HTTPS uses both. Asymmetric to <span class="ar-strong">exchange a session key</span> safely, then symmetric to encrypt the actual conversation. You get the key-distribution benefit of asymmetric and the speed of symmetric.
+        </div>
+      </div>
+
+      <div class="ar-tile accent span3">
+        <div class="ar-eyebrow">Public-key · which key when</div>
+        <h3 class="ar-h">Two opposite uses</h3>
+        <dl class="ar-deflist">
+          <div class="ar-deflist-heading">Confidentiality</div>
+          <dt>Encrypt</dt><dd>Receiver's <span class="ar-strong">public</span></dd>
+          <dt>Decrypt</dt><dd>Receiver's <span class="ar-strong">private</span></dd>
+        </dl>
+        <dl class="ar-deflist">
+          <div class="ar-deflist-heading">Signature</div>
+          <dt>Sign</dt><dd>Sender's <span class="ar-strong">private</span></dd>
+          <dt>Verify</dt><dd>Sender's <span class="ar-strong">public</span></dd>
+        </dl>
+        <div class="ar-trap">
+          <div class="ar-trap-label">Memory hook</div>
+          The <span class="ar-strong">private</span> key always belongs to the person doing the secret thing — opening their own mail, signing their own document. The <span class="ar-strong">public</span> key is for everyone else.
+        </div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">RSA · inventors</div>
+        <h3 class="ar-h">Three names, one acronym</h3>
+        <div class="ar-body" style="margin-bottom: 12px;">Published in 1977 at MIT. The acronym is just their surnames in order.</div>
+        <dl class="ar-deflist">
+          <dt>R</dt><dd>Ron <span class="ar-strong">Rivest</span></dd>
+          <dt>S</dt><dd>Adi <span class="ar-strong">Shamir</span></dd>
+          <dt>A</dt><dd>Leonard <span class="ar-strong">Adleman</span></dd>
+        </dl>
+        <div class="ar-trap">
+          <div class="ar-trap-label">How it works</div>
+          Security relies on the difficulty of factoring the product of two large primes. Easy to multiply, brutally hard to reverse — that asymmetry is the whole trick.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="ar-panel" id="panel-comparisons">
+    <div class="ar-grid">
+
+      <div class="ar-tile dark span6">
+        <div class="ar-eyebrow">Four pillars of OOP</div>
+        <h2 class="ar-h-xl">The vocabulary every OOP question is built on.</h2>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px 32px; margin-top: 18px;">
+          <div>
+            <div style="font-size: 15px; font-weight: 500; color: white;">Encapsulation</div>
+            <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 2px;">Bundle data + methods, hide internals.</div>
+          </div>
+          <div>
+            <div style="font-size: 15px; font-weight: 500; color: white;">Inheritance</div>
+            <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 2px;">Subclass extends superclass, reuses members.</div>
+          </div>
+          <div>
+            <div style="font-size: 15px; font-weight: 500; color: white;">Polymorphism</div>
+            <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 2px;">Same interface, different implementations.</div>
+          </div>
+          <div>
+            <div style="font-size: 15px; font-weight: 500; color: white;">Abstraction</div>
+            <div style="font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 2px;">Expose essential interface, hide implementation.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ar-tile span6">
+        <div class="ar-eyebrow">Class · object · method · constructor</div>
+        <h3 class="ar-h-lg">Foundational vocabulary</h3>
+        <div class="ar-body" style="margin-bottom: 14px;">ITPEC distractors swap these definitions around. Read the wording carefully.</div>
+        <dl class="ar-deflist">
+          <dt>Class</dt><dd>Blueprint defining structure + behavior</dd>
+          <dt>Object</dt><dd>Concrete realization of a class in memory</dd>
+          <dt>Instance</dt><dd>Same as object</dd>
+          <dt>Method</dt><dd>Function inside a class, operates on instances</dd>
+          <dt>Constructor</dt><dd>Special method that initializes a new instance</dd>
+        </dl>
+      </div>
+
+      <div class="ar-tile span6">
+        <div class="ar-eyebrow">Overloading · overriding · hiding</div>
+        <h3 class="ar-h-lg">Three ways to share a name</h3>
+        <table class="ar-table">
+          <thead>
+            <tr><th>Term</th><th>What it means</th><th>Resolved at</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-name">Overloading</td><td>Same name, different params</td><td>Compile time</td></tr>
+            <tr><td class="row-name">Overriding</td><td>Same signature in subclass</td><td>Runtime</td></tr>
+            <tr><td class="row-name">Hiding</td><td>Same field / static name</td><td>Reference type</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">OSI model · 7 layers</div>
+        <h3 class="ar-h">Top down · device at each level</h3>
+        <div class="ar-osi">
+          <div class="ar-osi-row">
+            <div class="ar-osi-num">7</div>
+            <div class="ar-osi-name">Application</div>
+            <div class="ar-osi-device">HTTP, FTP, DNS</div>
+          </div>
+          <div class="ar-osi-row">
+            <div class="ar-osi-num">6</div>
+            <div class="ar-osi-name">Presentation</div>
+            <div class="ar-osi-device">TLS, encoding</div>
+          </div>
+          <div class="ar-osi-row">
+            <div class="ar-osi-num">5</div>
+            <div class="ar-osi-name">Session</div>
+            <div class="ar-osi-device">Sockets</div>
+          </div>
+          <div class="ar-osi-row ar-osi-mark">
+            <div class="ar-osi-num">4</div>
+            <div class="ar-osi-name">Transport</div>
+            <div class="ar-osi-device">Gateway · TCP/UDP</div>
+          </div>
+          <div class="ar-osi-row ar-osi-mark">
+            <div class="ar-osi-num">3</div>
+            <div class="ar-osi-name">Network</div>
+            <div class="ar-osi-device">Router · IP</div>
+          </div>
+          <div class="ar-osi-row ar-osi-mark">
+            <div class="ar-osi-num">2</div>
+            <div class="ar-osi-name">Data link</div>
+            <div class="ar-osi-device">Switch, bridge · MAC</div>
+          </div>
+          <div class="ar-osi-row ar-osi-mark">
+            <div class="ar-osi-num">1</div>
+            <div class="ar-osi-name">Physical</div>
+            <div class="ar-osi-device">Hub, repeater · cable</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">ARP behavior</div>
+        <h3 class="ar-h">Maps IP → MAC</h3>
+        <dl class="ar-deflist">
+          <dt>Request</dt><dd>Broadcast (FF:FF:…)</dd>
+          <dt>Reply</dt><dd>Unicast</dd>
+        </dl>
+      </div>
+
+      <div class="ar-tile accent span3">
+        <div class="ar-eyebrow">Public-key direction</div>
+        <h3 class="ar-h">Two opposite uses</h3>
+        <dl class="ar-deflist">
+          <div class="ar-deflist-heading">Signature</div>
+          <dt>Sign</dt><dd>Sender's private</dd>
+          <dt>Verify</dt><dd>Sender's public</dd>
+        </dl>
+        <dl class="ar-deflist">
+          <div class="ar-deflist-heading">Confidentiality</div>
+          <dt>Encrypt</dt><dd>Receiver's public</dd>
+          <dt>Decrypt</dt><dd>Receiver's private</dd>
+        </dl>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Security devices</div>
+        <h3 class="ar-h">What sits where</h3>
+        <dl class="ar-deflist">
+          <dt>IDS</dt><dd>Detect + alert</dd>
+          <dt>IPS</dt><dd>Detect + block</dd>
+          <dt>WAF</dt><dd>HTTP-aware filter</dd>
+          <dt>Firewall</dt><dd>Network-level filter</dd>
+        </dl>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">MTD · RTO · RPO</div>
+        <h3 class="ar-h">Disaster recovery limits</h3>
+        <dl class="ar-deflist">
+          <dt>RTO ≤ MTD</dt><dd>Recovery time</dd>
+          <dt>RPO ≤ MTD</dt><dd>Data loss tolerance</dd>
+        </dl>
+        <dl class="ar-deflist">
+          <dt>RPO</dt><dd>Backward in time</dd>
+          <dt>RTO</dt><dd>Forward in time</dd>
+        </dl>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Test levels</div>
+        <h3 class="ar-h">In order</h3>
+        <div style="font-family: 'SF Mono', monospace; font-size: 13px; color: var(--ar-text); margin-bottom: 14px;">Unit → Integration → System → Acceptance</div>
+        <dl class="ar-deflist">
+          <dt>Integration</dt><dd>Module interfaces</dd>
+          <dt>Acceptance</dt><dd>User · business fit</dd>
+        </dl>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Coverage hierarchy</div>
+        <h3 class="ar-h">Strictness order</h3>
+        <div class="ar-mono">statement < branch
+< condition
+< multi-condition
+< path</div>
+      </div>
+
+      <div class="ar-tile span3">
+        <div class="ar-eyebrow">Static vs dynamic testing</div>
+        <h3 class="ar-h">Execution or not</h3>
+        <dl class="ar-deflist">
+          <dt>Static</dt><dd>No execution<span class="note">Lint, source analysis</span></dd>
+          <dt>Dynamic</dt><dd>With execution<span class="note">Profiling, coverage</span></dd>
+        </dl>
+      </div>
+
+      <div class="ar-tile span2">
+        <div class="ar-eyebrow">Reverse vs forward eng.</div>
+        <h3 class="ar-h">Direction</h3>
+        <dl class="ar-deflist">
+          <dt>Reverse</dt><dd>Code → diagram</dd>
+          <dt>Forward</dt><dd>Design → code</dd>
+        </dl>
+      </div>
+
+      <div class="ar-tile span2">
+        <div class="ar-eyebrow">Process vs product</div>
+        <h3 class="ar-h">Innovation type</h3>
+        <dl class="ar-deflist">
+          <dt>Process</dt><dd>Better manufacturing</dd>
+          <dt>Product</dt><dd>New / differentiated</dd>
+        </dl>
+      </div>
+
+      <div class="ar-tile span2">
+        <div class="ar-eyebrow">Fraud triangle</div>
+        <h3 class="ar-h">Three conditions</h3>
+        <dl class="ar-deflist">
+          <dt>Opportunity</dt><dd>Enables</dd>
+          <dt>Pressure</dt><dd>Motivates</dd>
+          <dt>Rationalization</dt><dd>Justifies</dd>
+        </dl>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="ar-panel" id="panel-animation">
+    <div class="ar-grid">
+
+      <div class="ar-tile span6" style="padding: 24px 28px;">
+        <div class="ar-eyebrow">Data structures · in motion</div>
+        <h2 class="ar-h-lg" style="margin-bottom: 14px;">Pick a structure. Run the operations. Watch what happens.</h2>
+
+        <div class="ar-subtabs" id="anim-subtabs">
+          <button class="ar-subtab active" data-sub="sll">Linked list</button>
+          <button class="ar-subtab" data-sub="dll">Doubly linked</button>
+          <button class="ar-subtab" data-sub="cll">Circular</button>
+          <button class="ar-subtab" data-sub="stack">Stack</button>
+          <button class="ar-subtab" data-sub="queue">Queue</button>
+          <button class="ar-subtab" data-sub="tree">Tree</button>
+          <button class="ar-subtab" data-sub="hash">Hash table</button>
+        </div>
+
+        <div class="ar-subpanel active" id="sub-sll">
+          <div class="ar-anim-controls">
+            <input type="number" class="ar-anim-input" id="sll-val" value="7" min="0" max="99">
+            <button class="ar-anim-btn primary" onclick="sll.insertHead()">Insert at head</button>
+            <button class="ar-anim-btn" onclick="sll.insertTail()">Insert at tail</button>
+            <button class="ar-anim-btn" onclick="sll.deleteHead()">Delete head</button>
+            <button class="ar-anim-btn" onclick="sll.deleteTail()">Delete tail</button>
+            <button class="ar-anim-btn" onclick="sll.reset()">Reset</button>
+          </div>
+          <div class="ar-canvas"><svg id="sll-svg" width="100%" height="100%" viewBox="0 0 700 280"></svg></div>
+          <div class="ar-narrator" id="sll-narrator">Tap an operation to see how the pointers rewire.</div>
+        </div>
+
+        <div class="ar-subpanel" id="sub-dll">
+          <div class="ar-anim-controls">
+            <input type="number" class="ar-anim-input" id="dll-val" value="7" min="0" max="99">
+            <button class="ar-anim-btn primary" onclick="dll.insertHead()">Insert at head</button>
+            <button class="ar-anim-btn" onclick="dll.insertTail()">Insert at tail</button>
+            <button class="ar-anim-btn" onclick="dll.deleteHead()">Delete head</button>
+            <button class="ar-anim-btn" onclick="dll.deleteTail()">Delete tail</button>
+            <button class="ar-anim-btn" onclick="dll.reset()">Reset</button>
+          </div>
+          <div class="ar-canvas"><svg id="dll-svg" width="100%" height="100%" viewBox="0 0 700 280"></svg></div>
+          <div class="ar-narrator" id="dll-narrator">Doubly linked nodes carry both <code>next</code> and <code>prev</code>. Watch all four pointers move on insert.</div>
+        </div>
+
+        <div class="ar-subpanel" id="sub-cll">
+          <div class="ar-anim-controls">
+            <input type="number" class="ar-anim-input" id="cll-val" value="7" min="0" max="99">
+            <button class="ar-anim-btn primary" onclick="cll.insertHead()">Insert at head</button>
+            <button class="ar-anim-btn" onclick="cll.insertTail()">Insert at tail</button>
+            <button class="ar-anim-btn" onclick="cll.deleteHead()">Delete head</button>
+            <button class="ar-anim-btn" onclick="cll.traverse()">Traverse</button>
+            <button class="ar-anim-btn" onclick="cll.reset()">Reset</button>
+          </div>
+          <div class="ar-canvas" style="height: 320px;"><svg id="cll-svg" width="100%" height="100%" viewBox="0 0 700 320"></svg></div>
+          <div class="ar-narrator" id="cll-narrator">In a circular list, the tail's <code>next</code> wraps back to the head — no <code>null</code>. Tap <span class="ar-strong">Traverse</span> to see why you need a stop condition.</div>
+        </div>
+
+        <div class="ar-subpanel" id="sub-stack">
+          <div class="ar-anim-controls">
+            <input type="number" class="ar-anim-input" id="stack-val" value="7" min="0" max="99">
+            <button class="ar-anim-btn primary" onclick="stack.push()">Push</button>
+            <button class="ar-anim-btn" onclick="stack.pop()">Pop</button>
+            <button class="ar-anim-btn" onclick="stack.peek()">Peek</button>
+            <button class="ar-anim-btn" onclick="stack.reset()">Reset</button>
+          </div>
+          <div class="ar-canvas"><svg id="stack-svg" width="100%" height="100%" viewBox="0 0 700 280"></svg></div>
+          <div class="ar-narrator" id="stack-narrator">LIFO — last in, first out. Push grows the top. Pop removes from the same end.</div>
+        </div>
+
+        <div class="ar-subpanel" id="sub-queue">
+          <div class="ar-anim-controls">
+            <input type="number" class="ar-anim-input" id="queue-val" value="7" min="0" max="99">
+            <button class="ar-anim-btn primary" onclick="queue.enqueue()">Enqueue</button>
+            <button class="ar-anim-btn" onclick="queue.dequeue()">Dequeue</button>
+            <button class="ar-anim-btn" onclick="queue.front()">Front</button>
+            <button class="ar-anim-btn" onclick="queue.reset()">Reset</button>
+          </div>
+          <div class="ar-canvas"><svg id="queue-svg" width="100%" height="100%" viewBox="0 0 700 280"></svg></div>
+          <div class="ar-narrator" id="queue-narrator">FIFO — first in, first out. Enter at the rear, leave from the front.</div>
+        </div>
+
+        <div class="ar-subpanel" id="sub-tree">
+          <div class="ar-anim-controls">
+            <button class="ar-anim-btn primary" onclick="tree.run('pre')">Pre-order</button>
+            <button class="ar-anim-btn primary" onclick="tree.run('in')">In-order</button>
+            <button class="ar-anim-btn primary" onclick="tree.run('post')">Post-order</button>
+            <button class="ar-anim-btn" onclick="tree.run('level')">Level-order</button>
+            <button class="ar-anim-btn" onclick="tree.reset()">Reset</button>
+          </div>
+          <div class="ar-canvas" style="height: 320px;"><svg id="tree-svg" width="100%" height="100%" viewBox="0 0 700 320"></svg></div>
+          <div class="ar-narrator" id="tree-narrator">Pick a traversal. Watch the order each node is visited. <span class="ar-strong">Pre/in/post</span> refers to when the root is visited relative to its subtrees.</div>
+        </div>
+
+        <div class="ar-subpanel" id="sub-hash">
+          <div class="ar-anim-controls">
+            <input type="number" class="ar-anim-input" id="hash-val" value="22" min="0" max="999">
+            <button class="ar-anim-btn primary" onclick="hash.insert()">Insert</button>
+            <button class="ar-anim-btn" onclick="hash.search()">Search</button>
+            <button class="ar-anim-btn" onclick="hash.reset()">Reset</button>
+          </div>
+          <div class="ar-canvas" style="height: 280px;"><svg id="hash-svg" width="100%" height="100%" viewBox="0 0 700 280"></svg></div>
+          <div class="ar-narrator" id="hash-narrator">Linear probing with <code>h(k) = k mod 7</code>, where <code>k</code> is the value you're inserting. The function picks a "home slot" for that value. On collision, walk forward until you find an empty slot.</div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  const tabs = document.querySelectorAll(".ar-tab");
+  const panels = document.querySelectorAll(".ar-panel");
+
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      const target = tab.dataset.panel;
+      tabs.forEach(t => t.classList.remove("active"));
+      panels.forEach(p => p.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById("panel-" + target).classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  });
+
+  const subtabs = document.querySelectorAll(".ar-subtab");
+  const subpanels = document.querySelectorAll(".ar-subpanel");
+  subtabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      const target = tab.dataset.sub;
+      subtabs.forEach(t => t.classList.remove("active"));
+      subpanels.forEach(p => p.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById("sub-" + target).classList.add("active");
+    });
+  });
+
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const NODE_W = 64, NODE_H = 44, NODE_GAP = 36;
+
+  function el(tag, attrs = {}) {
+    const e = document.createElementNS(SVG_NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  function narrate(id, text, html = false) {
+    const n = document.getElementById(id);
+    if (html) n.innerHTML = text;
+    else n.textContent = text;
+    n.classList.add("active");
+    clearTimeout(n._t);
+    n._t = setTimeout(() => n.classList.remove("active"), 1800);
+  }
+
+  function getVal(inputId) {
+    const v = parseInt(document.getElementById(inputId).value, 10);
+    if (isNaN(v)) return Math.floor(Math.random() * 90) + 10;
+    document.getElementById(inputId).value = Math.min(99, Math.max(0, v + 1));
+    return v;
+  }
+
+  function makeArrowDefs(svg) {
+    if (svg.querySelector("defs")) return;
+    const defs = el("defs");
+    const marker = el("marker", {
+      id: svg.id + "-arrow", viewBox: "0 0 10 10",
+      refX: 9, refY: 5, markerWidth: 6, markerHeight: 6, orient: "auto-start-reverse"
+    });
+    marker.appendChild(el("path", { d: "M2 1L8 5L2 9", fill: "none", stroke: "context-stroke", "stroke-width": 1.5, "stroke-linecap": "round", "stroke-linejoin": "round" }));
+    defs.appendChild(marker);
+    svg.appendChild(defs);
+  }
+
+  // ============ SINGLY LINKED LIST ============
+  const sll = (function() {
+    const svg = document.getElementById("sll-svg");
+    const startX = 80, baselineY = 130;
+    let nodes = [];
+
+    function nodeX(i) { return startX + i * (NODE_W + NODE_GAP); }
+
+    function build() {
+      svg.innerHTML = "";
+      makeArrowDefs(svg);
+
+      const headLabel = el("text", { class: "ar-label", x: 60, y: baselineY - 36, "text-anchor": "middle" });
+      headLabel.textContent = "head";
+      svg.appendChild(headLabel);
+
+      if (nodes.length === 0) {
+        const nullText = el("text", { class: "ar-label", x: 80, y: baselineY + 6, "text-anchor": "start" });
+        nullText.textContent = "null";
+        svg.appendChild(nullText);
+        return;
+      }
+
+      const headArrow = el("path", {
+        d: `M 60,${baselineY - 24} L 60,${baselineY - 6} L ${nodeX(0)},${baselineY - 6}`,
+        class: "ar-pointer",
+        "marker-end": `url(#${svg.id}-arrow)`
+      });
+      svg.appendChild(headArrow);
+
+      nodes.forEach((n, i) => {
+        const x = nodeX(i);
+        const g = el("g", { class: "ar-node", transform: `translate(${x}, ${baselineY})` });
+        g.appendChild(el("rect", { class: "ar-node-rect", x: 0, y: -NODE_H / 2, width: NODE_W, height: NODE_H, rx: 8 }));
+        const t = el("text", { class: "ar-node-text", x: NODE_W / 2, y: 5, "text-anchor": "middle" });
+        t.textContent = n.value;
+        g.appendChild(t);
+        n._g = g;
+        svg.appendChild(g);
+
+        if (i < nodes.length - 1) {
+          const a = el("line", {
+            x1: x + NODE_W, y1: baselineY,
+            x2: nodeX(i + 1), y2: baselineY,
+            class: "ar-pointer",
+            "marker-end": `url(#${svg.id}-arrow)`
+          });
+          svg.appendChild(a);
+        } else {
+          const nullText = el("text", { class: "ar-label", x: x + NODE_W + 14, y: baselineY + 4 });
+          nullText.textContent = "null";
+          svg.appendChild(nullText);
+        }
+      });
+    }
+
+    function highlight(idx, ms = 700) {
+      if (idx < 0 || idx >= nodes.length) return;
+      const g = nodes[idx]._g;
+      if (g) {
+        g.classList.add("highlight");
+        setTimeout(() => g.classList.remove("highlight"), ms);
+      }
+    }
+
+    return {
+      insertHead() {
+        const v = getVal("sll-val");
+        nodes.unshift({ value: v });
+        build();
+        highlight(0);
+        narrate("sll-narrator", `Inserted <code>${v}</code> at head. New node points to old head; head pointer rewired.`, true);
+      },
+      insertTail() {
+        const v = getVal("sll-val");
+        nodes.push({ value: v });
+        build();
+        highlight(nodes.length - 1);
+        if (nodes.length === 1) {
+          narrate("sll-narrator", `Inserted <code>${v}</code> as the only node. Head points to it; its next is null.`, true);
+        } else {
+          narrate("sll-narrator", `Inserted <code>${v}</code> at tail. Walked to the end (O(n)); old tail's next now points to new node.`, true);
+        }
+      },
+      deleteHead() {
+        if (nodes.length === 0) { narrate("sll-narrator", "List is empty — nothing to delete."); return; }
+        const v = nodes[0].value;
+        nodes.shift();
+        build();
+        narrate("sll-narrator", `Deleted head <code>${v}</code>. Head pointer moved to the next node — O(1).`, true);
+      },
+      deleteTail() {
+        if (nodes.length === 0) { narrate("sll-narrator", "List is empty — nothing to delete."); return; }
+        const v = nodes[nodes.length - 1].value;
+        nodes.pop();
+        build();
+        narrate("sll-narrator", `Deleted tail <code>${v}</code>. Walked to second-to-last (O(n)); its next is now null.`, true);
+      },
+      reset() {
+        nodes = [];
+        build();
+        narrate("sll-narrator", "List cleared.");
+      },
+      _init() {
+        nodes = [{ value: 12 }, { value: 34 }, { value: 8 }];
+        build();
+      }
+    };
+  })();
+
+  // ============ DOUBLY LINKED LIST ============
+  const dll = (function() {
+    const svg = document.getElementById("dll-svg");
+    const startX = 80, baselineY = 130;
+    let nodes = [];
+
+    function nodeX(i) { return startX + i * (NODE_W + NODE_GAP + 10); }
+
+    function build() {
+      svg.innerHTML = "";
+      makeArrowDefs(svg);
+
+      const headLabel = el("text", { class: "ar-label", x: 60, y: baselineY - 36, "text-anchor": "middle" });
+      headLabel.textContent = "head";
+      svg.appendChild(headLabel);
+
+      const tailLabel = el("text", { class: "ar-label", x: nodes.length ? nodeX(nodes.length - 1) + NODE_W / 2 : 60, y: baselineY + 50, "text-anchor": "middle" });
+      tailLabel.textContent = "tail";
+      svg.appendChild(tailLabel);
+
+      if (nodes.length === 0) {
+        const nullText = el("text", { class: "ar-label", x: 80, y: baselineY + 6, "text-anchor": "start" });
+        nullText.textContent = "null";
+        svg.appendChild(nullText);
+        return;
+      }
+
+      const headArrow = el("path", {
+        d: `M 60,${baselineY - 24} L 60,${baselineY - 6} L ${nodeX(0)},${baselineY - 6}`,
+        class: "ar-pointer",
+        "marker-end": `url(#${svg.id}-arrow)`
+      });
+      svg.appendChild(headArrow);
+
+      nodes.forEach((n, i) => {
+        const x = nodeX(i);
+        const g = el("g", { class: "ar-node", transform: `translate(${x}, ${baselineY})` });
+        g.appendChild(el("rect", { class: "ar-node-rect", x: 0, y: -NODE_H / 2, width: NODE_W, height: NODE_H, rx: 8 }));
+        const t = el("text", { class: "ar-node-text", x: NODE_W / 2, y: 5, "text-anchor": "middle" });
+        t.textContent = n.value;
+        g.appendChild(t);
+        n._g = g;
+        svg.appendChild(g);
+
+        if (i < nodes.length - 1) {
+          const nx = nodeX(i + 1);
+          const next = el("line", {
+            x1: x + NODE_W, y1: baselineY - 8, x2: nx, y2: baselineY - 8,
+            class: "ar-pointer", "marker-end": `url(#${svg.id}-arrow)`
+          });
+          const prev = el("line", {
+            x1: nx, y1: baselineY + 8, x2: x + NODE_W, y2: baselineY + 8,
+            class: "ar-pointer", "marker-end": `url(#${svg.id}-arrow)`
+          });
+          svg.appendChild(next);
+          svg.appendChild(prev);
+        }
+      });
+    }
+
+    function highlight(idx, ms = 800) {
+      if (idx < 0 || idx >= nodes.length) return;
+      const g = nodes[idx]._g;
+      if (g) {
+        g.classList.add("highlight");
+        setTimeout(() => g.classList.remove("highlight"), ms);
+      }
+    }
+
+    return {
+      insertHead() {
+        const v = getVal("dll-val");
+        nodes.unshift({ value: v });
+        build();
+        highlight(0);
+        if (nodes.length === 1) {
+          narrate("dll-narrator", `Inserted <code>${v}</code>. Head and tail both point to it; both pointers in the node are null.`, true);
+        } else {
+          narrate("dll-narrator", `Inserted <code>${v}</code> at head. <span class="ar-strong">4 pointers change:</span> new.next, new.prev (null), old-head.prev, head pointer.`, true);
+        }
+      },
+      insertTail() {
+        const v = getVal("dll-val");
+        nodes.push({ value: v });
+        build();
+        highlight(nodes.length - 1);
+        if (nodes.length === 1) {
+          narrate("dll-narrator", `Inserted <code>${v}</code>. Head and tail both point to it.`, true);
+        } else {
+          narrate("dll-narrator", `Inserted <code>${v}</code> at tail. <span class="ar-strong">4 pointers change:</span> new.prev, new.next (null), old-tail.next, tail pointer.`, true);
+        }
+      },
+      deleteHead() {
+        if (nodes.length === 0) { narrate("dll-narrator", "List is empty."); return; }
+        const v = nodes[0].value;
+        nodes.shift();
+        build();
+        narrate("dll-narrator", `Deleted head <code>${v}</code>. New head's prev set to null. O(1).`, true);
+      },
+      deleteTail() {
+        if (nodes.length === 0) { narrate("dll-narrator", "List is empty."); return; }
+        const v = nodes[nodes.length - 1].value;
+        nodes.pop();
+        build();
+        narrate("dll-narrator", `Deleted tail <code>${v}</code>. New tail's next set to null. O(1) — that's the doubly-linked advantage.`, true);
+      },
+      reset() {
+        nodes = [];
+        build();
+        narrate("dll-narrator", "List cleared.");
+      },
+      _init() {
+        nodes = [{ value: 12 }, { value: 34 }, { value: 8 }];
+        build();
+      }
+    };
+  })();
+
+  // ============ CIRCULAR LINKED LIST ============
+  const cll = (function() {
+    const svg = document.getElementById("cll-svg");
+    const cx = 350, cy = 160, radius = 110;
+    let nodes = [];
+    let traversing = false;
+
+    function nodePos(i, total) {
+      const angle = (i / total) * Math.PI * 2 - Math.PI / 2;
+      return {
+        x: cx + Math.cos(angle) * radius,
+        y: cy + Math.sin(angle) * radius,
+        angle
+      };
+    }
+
+    function build() {
+      svg.innerHTML = "";
+      makeArrowDefs(svg);
+
+      if (nodes.length === 0) {
+        const empty = el("text", { class: "ar-label", x: cx, y: cy, "text-anchor": "middle" });
+        empty.textContent = "empty";
+        svg.appendChild(empty);
+        return;
+      }
+
+      if (nodes.length === 1) {
+        const p = { x: cx, y: cy };
+        const g = el("g", { class: "ar-node", transform: `translate(${p.x - NODE_W / 2}, ${p.y - NODE_H / 2})` });
+        g.appendChild(el("rect", { class: "ar-node-rect", x: 0, y: 0, width: NODE_W, height: NODE_H, rx: 8 }));
+        const t = el("text", { class: "ar-node-text", x: NODE_W / 2, y: NODE_H / 2 + 5, "text-anchor": "middle" });
+        t.textContent = nodes[0].value;
+        g.appendChild(t);
+        nodes[0]._g = g;
+        svg.appendChild(g);
+
+        const loop = el("path", {
+          d: `M ${cx + NODE_W / 2} ${cy - 6} C ${cx + 60} ${cy - 50}, ${cx + 60} ${cy + 50}, ${cx + NODE_W / 2} ${cy + 6}`,
+          class: "ar-pointer",
+          "marker-end": `url(#${svg.id}-arrow)`,
+          fill: "none"
+        });
+        svg.appendChild(loop);
+
+        const headLabel = el("text", { class: "ar-label", x: p.x, y: p.y - NODE_H / 2 - 14, "text-anchor": "middle" });
+        headLabel.textContent = "head · tail";
+        svg.appendChild(headLabel);
+        return;
+      }
+
+      nodes.forEach((n, i) => {
+        const p = nodePos(i, nodes.length);
+        const g = el("g", { class: "ar-node", transform: `translate(${p.x - NODE_W / 2}, ${p.y - NODE_H / 2})` });
+        g.appendChild(el("rect", { class: "ar-node-rect", x: 0, y: 0, width: NODE_W, height: NODE_H, rx: 8 }));
+        const t = el("text", { class: "ar-node-text", x: NODE_W / 2, y: NODE_H / 2 + 5, "text-anchor": "middle" });
+        t.textContent = n.value;
+        g.appendChild(t);
+        n._g = g;
+        n._pos = p;
+        svg.appendChild(g);
+      });
+
+      nodes.forEach((n, i) => {
+        const from = n._pos;
+        const to = nodes[(i + 1) % nodes.length]._pos;
+
+        const dx = to.x - from.x;
+        const dy = to.y - from.y;
+        const len = Math.sqrt(dx * dx + dy * dy);
+        const ux = dx / len, uy = dy / len;
+        const fromEdge = { x: from.x + ux * (NODE_W / 2 - 4), y: from.y + uy * (NODE_H / 2 - 2) };
+        const toEdge = { x: to.x - ux * (NODE_W / 2 + 6), y: to.y - uy * (NODE_H / 2 + 4) };
+
+        const midX = (fromEdge.x + toEdge.x) / 2;
+        const midY = (fromEdge.y + toEdge.y) / 2;
+        const outX = midX + (midX - cx) * 0.18;
+        const outY = midY + (midY - cy) * 0.18;
+
+        const arrow = el("path", {
+          d: `M ${fromEdge.x} ${fromEdge.y} Q ${outX} ${outY} ${toEdge.x} ${toEdge.y}`,
+          class: "ar-pointer",
+          "marker-end": `url(#${svg.id}-arrow)`,
+          fill: "none"
+        });
+        svg.appendChild(arrow);
+      });
+
+      const head = nodes[0]._pos;
+      const dx = head.x - cx, dy = head.y - cy;
+      const labelX = head.x + dx * 0.35;
+      const labelY = head.y + dy * 0.35 - 4;
+      const headLabel = el("text", { class: "ar-label", x: labelX, y: labelY, "text-anchor": "middle" });
+      headLabel.textContent = "head";
+      svg.appendChild(headLabel);
+    }
+
+    function highlight(idx, ms = 700) {
+      if (idx < 0 || idx >= nodes.length) return;
+      const g = nodes[idx]._g;
+      if (g) {
+        g.classList.add("highlight");
+        setTimeout(() => g.classList.remove("highlight"), ms);
+      }
+    }
+
+    return {
+      insertHead() {
+        const v = getVal("cll-val");
+        nodes.unshift({ value: v });
+        build();
+        highlight(0);
+        if (nodes.length === 1) {
+          narrate("cll-narrator", `Inserted <code>${v}</code>. Single node — its <code>next</code> points to itself.`, true);
+        } else {
+          narrate("cll-narrator", `Inserted <code>${v}</code> at head. New node points to old head; tail's <code>next</code> rewired to new head — that's the circular bit.`, true);
+        }
+      },
+      insertTail() {
+        const v = getVal("cll-val");
+        nodes.push({ value: v });
+        build();
+        highlight(nodes.length - 1);
+        if (nodes.length === 1) {
+          narrate("cll-narrator", `Inserted <code>${v}</code>. Single node — its <code>next</code> points to itself.`, true);
+        } else {
+          narrate("cll-narrator", `Inserted <code>${v}</code> at tail. Old tail's <code>next</code> points to it; its <code>next</code> wraps back to head.`, true);
+        }
+      },
+      deleteHead() {
+        if (nodes.length === 0) { narrate("cll-narrator", "List is empty."); return; }
+        const v = nodes[0].value;
+        nodes.shift();
+        build();
+        if (nodes.length === 0) {
+          narrate("cll-narrator", `Deleted <code>${v}</code>. List is now empty.`, true);
+        } else {
+          narrate("cll-narrator", `Deleted head <code>${v}</code>. Tail's <code>next</code> now points to the new head.`, true);
+        }
+      },
+      async traverse() {
+        if (nodes.length === 0) { narrate("cll-narrator", "Nothing to traverse."); return; }
+        if (traversing) return;
+        traversing = true;
+
+        narrate("cll-narrator", `Traversing — stop when we reach head again. Without that check, we'd loop forever.`, true);
+
+        const total = nodes.length + 1;
+        for (let i = 0; i < total; i++) {
+          const idx = i % nodes.length;
+          if (i === total - 1) {
+            highlight(0, 1200);
+            await new Promise(r => setTimeout(r, 600));
+            narrate("cll-narrator", `Back at head <code>${nodes[0].value}</code> — stop. One full lap complete.`, true);
+          } else {
+            highlight(idx, 500);
+            await new Promise(r => setTimeout(r, 600));
+          }
+        }
+        traversing = false;
+      },
+      reset() {
+        nodes = [];
+        build();
+        narrate("cll-narrator", "List cleared.");
+      },
+      _init() {
+        nodes = [{ value: 12 }, { value: 34 }, { value: 8 }, { value: 21 }];
+        build();
+      }
+    };
+  })();
+
+  // ============ STACK ============
+  const stack = (function() {
+    const svg = document.getElementById("stack-svg");
+    const centerX = 350, baseY = 250, slotH = 40;
+    let items = [];
+
+    function build() {
+      svg.innerHTML = "";
+
+      const baseLine = el("line", {
+        x1: centerX - 90, y1: baseY + 6, x2: centerX + 90, y2: baseY + 6,
+        stroke: "var(--ar-text-soft)", "stroke-width": 1
+      });
+      svg.appendChild(baseLine);
+
+      const baseLabel = el("text", { class: "ar-label", x: centerX, y: baseY + 24, "text-anchor": "middle" });
+      baseLabel.textContent = "bottom";
+      svg.appendChild(baseLabel);
+
+      items.forEach((it, i) => {
+        const y = baseY - (i + 1) * slotH;
+        const g = el("g", { class: "ar-node", transform: `translate(${centerX - 80}, ${y})` });
+        g.appendChild(el("rect", { class: "ar-node-rect", x: 0, y: 0, width: 160, height: slotH - 4, rx: 8 }));
+        const t = el("text", { class: "ar-node-text", x: 80, y: slotH / 2 + 1, "text-anchor": "middle" });
+        t.textContent = it.value;
+        g.appendChild(t);
+        it._g = g;
+        svg.appendChild(g);
+      });
+
+      if (items.length > 0) {
+        const topY = baseY - items.length * slotH;
+        const topLabel = el("text", { class: "ar-label", x: centerX + 110, y: topY + slotH / 2 + 4, "text-anchor": "start" });
+        topLabel.textContent = "← top";
+        svg.appendChild(topLabel);
+      }
+    }
+
+    return {
+      push() {
+        const v = getVal("stack-val");
+        items.push({ value: v });
+        build();
+        items[items.length - 1]._g.classList.add("highlight");
+        setTimeout(() => items[items.length - 1] && items[items.length - 1]._g.classList.remove("highlight"), 800);
+        narrate("stack-narrator", `Pushed <code>${v}</code> onto the top. O(1) — no shifting needed.`, true);
+      },
+      pop() {
+        if (items.length === 0) { narrate("stack-narrator", "Stack is empty — underflow."); return; }
+        const v = items[items.length - 1].value;
+        items.pop();
+        build();
+        narrate("stack-narrator", `Popped <code>${v}</code> from the top. LIFO — last pushed comes off first.`, true);
+      },
+      peek() {
+        if (items.length === 0) { narrate("stack-narrator", "Stack is empty — nothing on top."); return; }
+        const v = items[items.length - 1].value;
+        items[items.length - 1]._g.classList.add("highlight");
+        setTimeout(() => items[items.length - 1] && items[items.length - 1]._g.classList.remove("highlight"), 1000);
+        narrate("stack-narrator", `Peek: top is <code>${v}</code>. Read without removing.`, true);
+      },
+      reset() {
+        items = [];
+        build();
+        narrate("stack-narrator", "Stack cleared.");
+      },
+      _init() {
+        items = [{ value: 12 }, { value: 34 }];
+        build();
+      }
+    };
+  })();
+
+  // ============ QUEUE ============
+  const queue = (function() {
+    const svg = document.getElementById("queue-svg");
+    const startX = 100, baselineY = 130, slotW = 70;
+    let items = [];
+
+    function build() {
+      svg.innerHTML = "";
+
+      items.forEach((it, i) => {
+        const x = startX + i * (slotW + 6);
+        const g = el("g", { class: "ar-node", transform: `translate(${x}, ${baselineY})` });
+        g.appendChild(el("rect", { class: "ar-node-rect", x: 0, y: -NODE_H / 2, width: slotW, height: NODE_H, rx: 8 }));
+        const t = el("text", { class: "ar-node-text", x: slotW / 2, y: 5, "text-anchor": "middle" });
+        t.textContent = it.value;
+        g.appendChild(t);
+        it._g = g;
+        svg.appendChild(g);
+      });
+
+      if (items.length > 0) {
+        const frontX = startX + slotW / 2;
+        const rearX = startX + (items.length - 1) * (slotW + 6) + slotW / 2;
+
+        const frontLabel = el("text", { class: "ar-label", x: frontX, y: baselineY - 36, "text-anchor": "middle" });
+        frontLabel.textContent = "front";
+        svg.appendChild(frontLabel);
+        makeArrowDefs(svg);
+        const frontArrow = el("line", {
+          x1: frontX, y1: baselineY - 30, x2: frontX, y2: baselineY - 24,
+          class: "ar-pointer", "marker-end": `url(#${svg.id}-arrow)`
+        });
+        svg.appendChild(frontArrow);
+
+        const rearLabel = el("text", { class: "ar-label", x: rearX, y: baselineY + 50, "text-anchor": "middle" });
+        rearLabel.textContent = "rear";
+        svg.appendChild(rearLabel);
+        if (items.length > 1) {
+          const rearArrow = el("line", {
+            x1: rearX, y1: baselineY + 38, x2: rearX, y2: baselineY + 26,
+            class: "ar-pointer", "marker-end": `url(#${svg.id}-arrow)`
+          });
+          svg.appendChild(rearArrow);
+        }
+      } else {
+        const empty = el("text", { class: "ar-label", x: 350, y: baselineY + 4, "text-anchor": "middle" });
+        empty.textContent = "empty";
+        svg.appendChild(empty);
+      }
+    }
+
+    return {
+      enqueue() {
+        const v = getVal("queue-val");
+        items.push({ value: v });
+        build();
+        items[items.length - 1]._g.classList.add("highlight");
+        setTimeout(() => items[items.length - 1] && items[items.length - 1]._g.classList.remove("highlight"), 800);
+        narrate("queue-narrator", `Enqueued <code>${v}</code> at the rear. O(1).`, true);
+      },
+      dequeue() {
+        if (items.length === 0) { narrate("queue-narrator", "Queue is empty — underflow."); return; }
+        const v = items[0].value;
+        items.shift();
+        build();
+        narrate("queue-narrator", `Dequeued <code>${v}</code> from the front. FIFO — first enqueued comes off first.`, true);
+      },
+      front() {
+        if (items.length === 0) { narrate("queue-narrator", "Queue is empty."); return; }
+        const v = items[0].value;
+        items[0]._g.classList.add("highlight");
+        setTimeout(() => items[0] && items[0]._g.classList.remove("highlight"), 1000);
+        narrate("queue-narrator", `Front is <code>${v}</code>. Read without removing.`, true);
+      },
+      reset() {
+        items = [];
+        build();
+        narrate("queue-narrator", "Queue cleared.");
+      },
+      _init() {
+        items = [{ value: 12 }, { value: 34 }, { value: 8 }];
+        build();
+      }
+    };
+  })();
+
+  // ============ TREE ============
+  const tree = (function() {
+    const svg = document.getElementById("tree-svg");
+    const layout = {
+      A: { x: 350, y: 60,  l: "B", r: "C" },
+      B: { x: 230, y: 140, l: "D", r: "E" },
+      C: { x: 470, y: 140, l: null, r: "F" },
+      D: { x: 170, y: 230, l: null, r: null },
+      E: { x: 290, y: 230, l: null, r: null },
+      F: { x: 530, y: 230, l: null, r: null }
+    };
+    const nodeRefs = {};
+    let running = false;
+
+    function build() {
+      svg.innerHTML = "";
+      for (const k in layout) {
+        const n = layout[k];
+        if (n.l) {
+          const c = layout[n.l];
+          svg.appendChild(el("line", { x1: n.x, y1: n.y, x2: c.x, y2: c.y, stroke: "var(--ar-text-soft)", "stroke-width": 0.5, opacity: 0.6 }));
+        }
+        if (n.r) {
+          const c = layout[n.r];
+          svg.appendChild(el("line", { x1: n.x, y1: n.y, x2: c.x, y2: c.y, stroke: "var(--ar-text-soft)", "stroke-width": 0.5, opacity: 0.6 }));
+        }
+      }
+      for (const k in layout) {
+        const n = layout[k];
+        const g = el("g", { class: "ar-node", transform: `translate(${n.x}, ${n.y})` });
+        g.appendChild(el("circle", { class: "ar-node-rect", cx: 0, cy: 0, r: 22 }));
+        const t = el("text", { class: "ar-node-text", x: 0, y: 5, "text-anchor": "middle" });
+        t.textContent = k;
+        g.appendChild(t);
+        nodeRefs[k] = g;
+        svg.appendChild(g);
+      }
+      const strip = el("g", { id: "tree-strip", transform: "translate(40, 285)" });
+      svg.appendChild(strip);
+    }
+
+    function clearStrip() {
+      const strip = svg.querySelector("#tree-strip");
+      if (strip) strip.innerHTML = "";
+    }
+
+    function appendStrip(letter, idx) {
+      const strip = svg.querySelector("#tree-strip");
+      const x = idx * 38;
+      const g = el("g", { transform: `translate(${x}, 0)`, opacity: 0 });
+      const r = el("rect", { x: 0, y: -16, width: 30, height: 26, rx: 6, fill: "var(--ar-accent)", opacity: 0.85 });
+      g.appendChild(r);
+      const t = el("text", { x: 15, y: 4, "text-anchor": "middle", "font-family": "SF Mono, monospace", "font-size": 13, "font-weight": 500, fill: "white" });
+      t.textContent = letter;
+      g.appendChild(t);
+      strip.appendChild(g);
+      requestAnimationFrame(() => { g.setAttribute("opacity", 1); g.style.transition = "opacity 0.3s"; });
+    }
+
+    function clearHighlights() {
+      Object.values(nodeRefs).forEach(g => g.classList.remove("highlight"));
+    }
+
+    function preorder(k, out) { if (!k) return; out.push(k); preorder(layout[k].l, out); preorder(layout[k].r, out); }
+    function inorder(k, out)  { if (!k) return; inorder(layout[k].l, out); out.push(k); inorder(layout[k].r, out); }
+    function postorder(k, out){ if (!k) return; postorder(layout[k].l, out); postorder(layout[k].r, out); out.push(k); }
+    function levelorder(out) {
+      const q = ["A"];
+      while (q.length) { const k = q.shift(); out.push(k); if (layout[k].l) q.push(layout[k].l); if (layout[k].r) q.push(layout[k].r); }
+    }
+
+    return {
+      async run(mode) {
+        if (running) return;
+        running = true;
+        clearHighlights();
+        clearStrip();
+
+        const order = [];
+        if (mode === "pre")   preorder("A", order);
+        if (mode === "in")    inorder("A", order);
+        if (mode === "post")  postorder("A", order);
+        if (mode === "level") levelorder(order);
+
+        const labels = { pre: "Pre-order · Root → L → R", in: "In-order · L → Root → R", post: "Post-order · L → R → Root", level: "Level-order · BFS top-down" };
+        narrate("tree-narrator", `${labels[mode]} &nbsp;→&nbsp; visiting nodes one at a time…`, true);
+
+        for (let i = 0; i < order.length; i++) {
+          const k = order[i];
+          nodeRefs[k].classList.add("highlight");
+          appendStrip(k, i);
+          await new Promise(r => setTimeout(r, 550));
+          nodeRefs[k].classList.remove("highlight");
+        }
+
+        narrate("tree-narrator", `${labels[mode]} &nbsp;→&nbsp; result: <code>${order.join(" ")}</code>`, true);
+        running = false;
+      },
+      reset() {
+        clearHighlights();
+        clearStrip();
+        narrate("tree-narrator", "Tree reset. Pick a traversal to run again.");
+      },
+      _init() { build(); }
+    };
+  })();
+
+  // ============ HASH TABLE ============
+  const hash = (function() {
+    const svg = document.getElementById("hash-svg");
+    const SIZE = 7;
+    const slotW = 80, slotH = 60, startX = 70, baselineY = 100;
+    let slots = new Array(SIZE).fill(null);
+    let running = false;
+
+    function slotX(i) { return startX + i * (slotW + 6); }
+
+    function build() {
+      svg.innerHTML = "";
+
+      for (let i = 0; i < SIZE; i++) {
+        const x = slotX(i);
+        const idx = el("text", { class: "ar-label", x: x + slotW / 2, y: baselineY - slotH / 2 - 10, "text-anchor": "middle" });
+        idx.textContent = i;
+        svg.appendChild(idx);
+
+        const g = el("g", { class: "ar-node", transform: `translate(${x}, ${baselineY})` });
+        const isFilled = slots[i] !== null;
+        const r = el("rect", { class: "ar-node-rect", x: 0, y: -slotH / 2, width: slotW, height: slotH, rx: 8 });
+        if (isFilled) {
+          r.setAttribute("fill", "var(--ar-accent-bg)");
+          r.setAttribute("stroke", "var(--ar-accent)");
+        }
+        g.appendChild(r);
+        if (isFilled) {
+          const t = el("text", { class: "ar-node-text", x: slotW / 2, y: 5, "text-anchor": "middle", fill: "var(--ar-accent)" });
+          t.textContent = slots[i];
+          g.appendChild(t);
+        }
+        svg.appendChild(g);
+      }
+
+      const ptr = el("g", { id: "hash-ptr", opacity: 0, transform: `translate(${slotX(0) + slotW / 2}, ${baselineY + slotH / 2 + 18})` });
+      const arrow = el("path", { d: "M 0 -10 L -6 0 L 6 0 Z", fill: "var(--ar-accent)" });
+      ptr.appendChild(arrow);
+      svg.appendChild(ptr);
+    }
+
+    function movePointer(i) {
+      const ptr = svg.querySelector("#hash-ptr");
+      if (!ptr) return;
+      ptr.style.transition = "transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.2s";
+      ptr.setAttribute("transform", `translate(${slotX(i) + slotW / 2}, ${baselineY + slotH / 2 + 18})`);
+      ptr.setAttribute("opacity", 1);
+    }
+    function hidePointer() {
+      const ptr = svg.querySelector("#hash-ptr");
+      if (ptr) ptr.setAttribute("opacity", 0);
+    }
+
+    function flashSlot(i, color) {
+      const slot = svg.querySelectorAll(".ar-node")[i];
+      if (!slot) return;
+      const rect = slot.querySelector("rect");
+      const oldFill = rect.getAttribute("fill") || "var(--ar-bg)";
+      const oldStroke = rect.getAttribute("stroke") || "var(--ar-text)";
+      rect.setAttribute("fill", color);
+      rect.setAttribute("stroke", color);
+      setTimeout(() => {
+        rect.setAttribute("fill", oldFill);
+        rect.setAttribute("stroke", oldStroke);
+      }, 400);
+    }
+
+    return {
+      async insert() {
+        if (running) return;
+        running = true;
+        const v = parseInt(document.getElementById("hash-val").value, 10) || 0;
+        document.getElementById("hash-val").value = Math.floor(Math.random() * 90) + 10;
+
+        const home = v % SIZE;
+        narrate("hash-narrator", `Inserting <code>${v}</code> &nbsp;·&nbsp; <code>${v} mod 7 = ${home}</code>`, true);
+        movePointer(home);
+        await new Promise(r => setTimeout(r, 600));
+
+        let i = home;
+        let probes = 0;
+        while (slots[i] !== null && probes < SIZE) {
+          flashSlot(i, "#D85A30");
+          narrate("hash-narrator", `Slot ${i} taken by <code>${slots[i]}</code> &nbsp;·&nbsp; probe forward to slot ${(i + 1) % SIZE}`, true);
+          await new Promise(r => setTimeout(r, 700));
+          i = (i + 1) % SIZE;
+          movePointer(i);
+          probes++;
+          await new Promise(r => setTimeout(r, 400));
+        }
+
+        if (probes >= SIZE) {
+          narrate("hash-narrator", `Table full — can't insert <code>${v}</code>.`, true);
+          hidePointer();
+          running = false;
+          return;
+        }
+
+        slots[i] = v;
+        build();
+        flashSlot(i, "var(--ar-accent)");
+        if (probes === 0) {
+          narrate("hash-narrator", `Slot ${home} was free — placed <code>${v}</code> directly. No probes needed.`, true);
+        } else {
+          narrate("hash-narrator", `Placed <code>${v}</code> at slot ${i} after ${probes} probe${probes > 1 ? "s" : ""}.`, true);
+        }
+        setTimeout(hidePointer, 1500);
+        running = false;
+      },
+      async search() {
+        if (running) return;
+        running = true;
+        const v = parseInt(document.getElementById("hash-val").value, 10) || 0;
+
+        const home = v % SIZE;
+        narrate("hash-narrator", `Searching for <code>${v}</code> &nbsp;·&nbsp; start at <code>${v} mod 7 = ${home}</code>`, true);
+        movePointer(home);
+        await new Promise(r => setTimeout(r, 600));
+
+        let i = home;
+        let probes = 0;
+        while (probes < SIZE) {
+          if (slots[i] === v) {
+            flashSlot(i, "var(--ar-accent)");
+            narrate("hash-narrator", `Found <code>${v}</code> at slot ${i} after ${probes} probe${probes !== 1 ? "s" : ""}.`, true);
+            setTimeout(hidePointer, 1500);
+            running = false;
+            return;
+          }
+          if (slots[i] === null) {
+            narrate("hash-narrator", `Slot ${i} is empty — <code>${v}</code> isn't in the table.`, true);
+            setTimeout(hidePointer, 1500);
+            running = false;
+            return;
+          }
+          flashSlot(i, "#D85A30");
+          await new Promise(r => setTimeout(r, 500));
+          i = (i + 1) % SIZE;
+          movePointer(i);
+          probes++;
+          await new Promise(r => setTimeout(r, 400));
+        }
+        narrate("hash-narrator", `Walked entire table — <code>${v}</code> not found.`, true);
+        setTimeout(hidePointer, 1500);
+        running = false;
+      },
+      reset() {
+        slots = new Array(SIZE).fill(null);
+        build();
+        narrate("hash-narrator", "Table cleared.");
+      },
+      _init() {
+        slots[1] = 22;
+        slots[0] = 14;
+        slots[2] = 36;
+        slots[3] = 16;
+        build();
+      }
+    };
+  })();
+
+  window.sll = sll;
+  window.dll = dll;
+  window.cll = cll;
+  window.stack = stack;
+  window.queue = queue;
+  window.tree = tree;
+  window.hash = hash;
+
+  sll._init();
+  dll._init();
+  cll._init();
+  stack._init();
+  queue._init();
+  tree._init();
+  hash._init();
+})();
+</script>
+</body>
+</html>
