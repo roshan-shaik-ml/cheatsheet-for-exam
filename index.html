@@ -50,12 +50,18 @@
     z-index: -1;
   }
   @media (prefers-color-scheme: dark) {
-    .ar-wrap::before {
+    :root:not([data-theme]) .ar-wrap::before {
       background: radial-gradient(circle at center, rgba(41, 151, 255, 0.22), transparent 60%);
     }
-    .ar-wrap::after {
+    :root:not([data-theme]) .ar-wrap::after {
       background: radial-gradient(circle at center, rgba(212, 83, 126, 0.18), transparent 60%);
     }
+  }
+  :root[data-theme="dark"] .ar-wrap::before {
+    background: radial-gradient(circle at center, rgba(41, 151, 255, 0.22), transparent 60%);
+  }
+  :root[data-theme="dark"] .ar-wrap::after {
+    background: radial-gradient(circle at center, rgba(212, 83, 126, 0.18), transparent 60%);
   }
 
   .ar-hero {
@@ -605,8 +611,32 @@
     --ar-chip-hover: rgba(235, 235, 237, 0.9);
   }
 
+  :root[data-theme="dark"] {
+    --ar-bg: #000000;
+    --ar-tile: rgba(28, 28, 30, 0.65);
+    --ar-border: rgba(255, 255, 255, 0.1);
+    --ar-text: #f5f5f7;
+    --ar-text-soft: #a1a1a6;
+    --ar-accent: #2997ff;
+    --ar-accent-bg: rgba(17, 36, 61, 0.7);
+    --ar-accent-border: rgba(41, 151, 255, 0.28);
+    --ar-eq-bg: rgba(255, 255, 255, 0.06);
+    --ar-chip: rgba(44, 44, 46, 0.65);
+    --ar-chip-hover: rgba(58, 58, 60, 0.85);
+  }
+  :root[data-theme="dark"] .ar-tile.dark {
+    background: rgba(29, 29, 31, 0.92);
+    color: #ffffff;
+  }
+  :root[data-theme="dark"] .ar-tile.dark .ar-eyebrow,
+  :root[data-theme="dark"] .ar-tile.dark .ar-soft { color: rgba(255,255,255,0.65); }
+  :root[data-theme="dark"] .ar-tile.dark .ar-eq,
+  :root[data-theme="dark"] .ar-tile.dark .ar-mono { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.95); }
+  :root[data-theme="dark"] .ar-tile.dark .ar-result-pill { background: rgba(255,255,255,0.12); color: #fff; }
+  :root[data-theme="dark"] .ar-tile.dark .ar-trap { border-top-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
+
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme]) {
       --ar-bg: #000000;
       --ar-tile: rgba(28, 28, 30, 0.65);
       --ar-border: rgba(255, 255, 255, 0.1);
@@ -619,16 +649,51 @@
       --ar-chip: rgba(44, 44, 46, 0.65);
       --ar-chip-hover: rgba(58, 58, 60, 0.85);
     }
-    .ar-tile.dark {
-      background: rgba(245, 245, 247, 0.92);
-      color: #1d1d1f;
+    :root:not([data-theme]) .ar-tile.dark {
+      background: rgba(29, 29, 31, 0.92);
+      color: #ffffff;
     }
-    .ar-tile.dark .ar-eyebrow,
-    .ar-tile.dark .ar-soft { color: rgba(0,0,0,0.6); }
-    .ar-tile.dark .ar-eq,
-    .ar-tile.dark .ar-mono { background: rgba(0,0,0,0.06); color: #1d1d1f; }
-    .ar-tile.dark .ar-result-pill { background: #1d1d1f; color: #fff; }
-    .ar-tile.dark .ar-trap { border-top-color: rgba(0,0,0,0.12); color: rgba(0,0,0,0.6); }
+    :root:not([data-theme]) .ar-tile.dark .ar-eyebrow,
+    :root:not([data-theme]) .ar-tile.dark .ar-soft { color: rgba(255,255,255,0.65); }
+    :root:not([data-theme]) .ar-tile.dark .ar-eq,
+    :root:not([data-theme]) .ar-tile.dark .ar-mono { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.95); }
+    :root:not([data-theme]) .ar-tile.dark .ar-result-pill { background: rgba(255,255,255,0.12); color: #fff; }
+    :root:not([data-theme]) .ar-tile.dark .ar-trap { border-top-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
+  }
+
+  .ar-theme-toggle {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 0.5px solid var(--ar-border);
+    background: var(--ar-tile);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    color: var(--ar-text);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    transition: transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1),
+                background 0.25s ease, color 0.25s ease;
+    z-index: 100;
+  }
+  .ar-theme-toggle:hover {
+    transform: translateY(-1px);
+    background: var(--ar-chip-hover);
+  }
+  .ar-theme-toggle svg { width: 18px; height: 18px; }
+  .ar-theme-toggle .ar-icon-sun { display: none; }
+  .ar-theme-toggle .ar-icon-moon { display: block; }
+  :root[data-theme="dark"] .ar-theme-toggle .ar-icon-sun { display: block; }
+  :root[data-theme="dark"] .ar-theme-toggle .ar-icon-moon { display: none; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) .ar-theme-toggle .ar-icon-sun { display: block; }
+    :root:not([data-theme]) .ar-theme-toggle .ar-icon-moon { display: none; }
   }
 
   .ar-subtabs {
@@ -784,12 +849,39 @@
 
   body {
     background: var(--ar-bg);
+    color: var(--ar-text);
     margin: 0;
     padding: 16px 24px;
   }
 </style>
+<script>
+  (function() {
+    try {
+      var saved = localStorage.getItem("ar-theme");
+      if (saved === "dark" || saved === "light") {
+        document.documentElement.setAttribute("data-theme", saved);
+      }
+    } catch (e) {}
+  })();
+</script>
 </head>
 <body>
+<button class="ar-theme-toggle" id="ar-theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle theme">
+  <svg class="ar-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+  </svg>
+  <svg class="ar-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="4.2"></circle>
+    <line x1="12" y1="2.5" x2="12" y2="5"></line>
+    <line x1="12" y1="19" x2="12" y2="21.5"></line>
+    <line x1="2.5" y1="12" x2="5" y2="12"></line>
+    <line x1="19" y1="12" x2="21.5" y2="12"></line>
+    <line x1="4.9" y1="4.9" x2="6.7" y2="6.7"></line>
+    <line x1="17.3" y1="17.3" x2="19.1" y2="19.1"></line>
+    <line x1="4.9" y1="19.1" x2="6.7" y2="17.3"></line>
+    <line x1="17.3" y1="6.7" x2="19.1" y2="4.9"></line>
+  </svg>
+</button>
 <div class="ar-wrap">
 
   <div class="ar-hero">
@@ -1715,6 +1807,26 @@ avg waiting    = Σ waiting(i) / n</div>
 </div>
 
 <script>
+(function() {
+  const root = document.documentElement;
+  const toggle = document.getElementById("ar-theme-toggle");
+  const mql = window.matchMedia("(prefers-color-scheme: dark)");
+
+  function currentTheme() {
+    const forced = root.getAttribute("data-theme");
+    if (forced === "dark" || forced === "light") return forced;
+    return mql.matches ? "dark" : "light";
+  }
+
+  if (toggle) {
+    toggle.addEventListener("click", () => {
+      const next = currentTheme() === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("ar-theme", next); } catch (e) {}
+    });
+  }
+})();
+
 (function() {
   const tabs = document.querySelectorAll(".ar-tab");
   const panels = document.querySelectorAll(".ar-panel");
